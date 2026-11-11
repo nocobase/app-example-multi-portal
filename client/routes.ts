@@ -52,6 +52,56 @@ const appRoutes: AppClientRouteContribution = defineAppRoutes([
     componentLoader: () => import('./pages/servicehub/insights.js'),
   },
   {
+    name: 'servicehubcustomerdevices',
+    path: '/portals/customer/devices',
+    auth: 'required',
+    authz: {
+      resource: { type: 'settings', id: 'servicehub.customer' },
+      action: 'read',
+    },
+    componentLoader: () => import('./pages/servicehub/customer.js'),
+  },
+  {
+    name: 'servicehubcustomerrequests',
+    path: '/portals/customer/requests',
+    auth: 'required',
+    authz: {
+      resource: { type: 'settings', id: 'servicehub.customer' },
+      action: 'read',
+    },
+    componentLoader: () => import('./pages/servicehub/customer.js'),
+  },
+  {
+    name: 'servicehubdispatchteam',
+    path: '/portals/dispatch/team',
+    auth: 'required',
+    authz: {
+      resource: { type: 'settings', id: 'servicehub.dispatch' },
+      action: 'read',
+    },
+    componentLoader: () => import('./pages/servicehub/dispatch.js'),
+  },
+  {
+    name: 'servicehubdispatchoverview',
+    path: '/portals/dispatch/overview',
+    auth: 'required',
+    authz: {
+      resource: { type: 'settings', id: 'servicehub.dispatch' },
+      action: 'read',
+    },
+    componentLoader: () => import('./pages/servicehub/dispatch.js'),
+  },
+  {
+    name: 'servicehubengineerhistory',
+    path: '/portals/engineer/history',
+    auth: 'required',
+    authz: {
+      resource: { type: 'settings', id: 'servicehub.engineer' },
+      action: 'read',
+    },
+    componentLoader: () => import('./pages/servicehub/engineer.js'),
+  },
+  {
     // Every signed-in user reaches the landing page. `authz: 'skip'` takes it out of page authorization entirely, so
     // no permission change can leave a user signed in with nowhere to land.
     authz: 'skip',

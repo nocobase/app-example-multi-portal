@@ -58,13 +58,14 @@ export default defineApiRoutes<Application>((app) => {
   router.use('/serviceHub/*', auth.required(), authz.middleware());
   router.use('/serviceHub/:portal/*', async (c, next) => {
     const portal = c.req.param('portal');
-    if (!portalIds.some((id) => id === portal)) { await next(); return; }
-    await c
-      .get('authz')
-      .require({
-        resource: { type: 'settings', id: 'servicehub.' + portal },
-        action: 'read',
-      });
+    if (!portalIds.some((id) => id === portal)) {
+      await next();
+      return;
+    }
+    await c.get('authz').require({
+      resource: { type: 'settings', id: 'servicehub.' + portal },
+      action: 'read',
+    });
     await portals.requireInstalled(portal);
     await next();
   });
@@ -152,7 +153,11 @@ export default defineApiRoutes<Application>((app) => {
           ? await q
               .selectFrom('user')
               .select(['id', 'name'])
-              .where('id', 'in', ['engineer-1', 'engineer-2'])
+              .where('id', 'in', [
+                'engineer-1',
+                'engineer-2',
+                'service-manager',
+              ])
               .execute()
           : [];
       return c.json({
@@ -277,7 +282,7 @@ export default defineApiRoutes<Application>((app) => {
           .selectFrom('user')
           .select(['id', 'name'])
           .where('id', '=', body.engineerId ?? '')
-          .where('id', 'in', ['engineer-1', 'engineer-2'])
+          .where('id', 'in', ['engineer-1', 'engineer-2', 'service-manager'])
           .executeTakeFirst();
         if (!engineer)
           throw new ApiError({

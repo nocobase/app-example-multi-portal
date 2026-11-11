@@ -83,7 +83,7 @@ pnpm nocobase config check
 
 默认界面为英文，可通过语言菜单切换中文。两种语言共用一套英文示例数据，门店分布在伦敦、阿姆斯特丹和新加坡；人名、门店和地址均为虚构，营业时间采用门店当地时间。
 
-首次启动会自动执行数据库迁移和种子数据，创建演示角色、6 个业务账号、6 台设备及 12 张工单。演示数据对应 3 家咖啡门店，覆盖报修、派单、处理和确认等状态。
+首次启动会自动执行数据库迁移和种子数据，创建演示角色、7 个业务账号、6 台设备及 12 张工单。演示数据对应 3 家咖啡门店，覆盖报修、派单、处理和确认等状态。
 
 默认初始管理员在 `config.yml` 的 `users.initialAdmin` 中配置：
 
@@ -118,7 +118,7 @@ APP_SERVER_HOST=0.0.0.0 pnpm dev
 | Customer portal    | 客户           | 我的设备、发起报修、进度查询、服务确认 | 已安装     |
 | Dispatch console   | 调度员         | 工单总览、分配工程师、跟踪服务进度     | 已安装     |
 | Engineer workspace | 工程师         | 分配给我的任务、接单、填写处理结果     | 已安装     |
-| Service insights   | 管理员演示扩展 | 服务分析入口                           | 保留未安装 |
+| Service insights   | 管理员演示扩展 | 实时状态分布与门店服务进度             | 保留未安装 |
 
 回到首页工作台即可进入已安装且有权访问的门户。门户是否安装和账号是否有业务权限是两个独立条件；安装门户不会给所有用户自动授权。
 
@@ -126,16 +126,37 @@ APP_SERVER_HOST=0.0.0.0 pnpm dev
 
 以下业务账号密码统一为 **`ServiceHub2026!`**。用户名或邮箱均可用于登录。
 
-| 角色                               | 姓名         | 用户名       | 邮箱                            |
-| ---------------------------------- | ------------ | ------------ | ------------------------------- |
-| 客户 · Harbor Coffee · London      | Alex Morgan  | `customer1`  | `customer-1@servicehub.example` |
-| 客户 · Juniper Coffee · Amsterdam  | Sofia Rivera | `customer2`  | `customer-2@servicehub.example` |
-| 客户 · Daylight Coffee · Singapore | Jamie Park   | `customer3`  | `customer-3@servicehub.example` |
-| 调度员                             | Jordan Lee   | `dispatcher` | `dispatcher@servicehub.example` |
-| 工程师                             | Taylor Chen  | `engineer1`  | `engineer-1@servicehub.example` |
-| 工程师                             | Sam Patel    | `engineer2`  | `engineer-2@servicehub.example` |
+| 角色                               | 姓名          | 用户名       | 邮箱                            |
+| ---------------------------------- | ------------- | ------------ | ------------------------------- |
+| 客户 · Harbor Coffee · London      | Alex Morgan   | `customer1`  | `customer-1@servicehub.example` |
+| 客户 · Juniper Coffee · Amsterdam  | Sofia Rivera  | `customer2`  | `customer-2@servicehub.example` |
+| 客户 · Daylight Coffee · Singapore | Jamie Park    | `customer3`  | `customer-3@servicehub.example` |
+| 调度员                             | Jordan Lee    | `dispatcher` | `dispatcher@servicehub.example` |
+| 工程师                             | Taylor Chen   | `engineer1`  | `engineer-1@servicehub.example` |
+| 工程师                             | Sam Patel     | `engineer2`  | `engineer-2@servicehub.example` |
+| 服务经理                           | Morgan Brooks | `manager`    | `manager@servicehub.example`    |
 
 客户只访问自己的设备和工单，工程师处理分配给自己的任务，调度员负责跨客户派单。使用不同浏览器配置文件分别登录三个角色，可以方便地切换展示；同一浏览器的普通标签页共享登录会话。
+
+## 先展示多门户特色
+
+先用 **`manager` / `ServiceHub2026!`** 登录。Morgan Brooks 同时负责调度和现场服务，有自己的两张待处理任务；这个账号没有客户权限或系统管理权限。
+
+1. 进入 **Dispatch console**，使用左侧导航查看 **Ticket queue**、**Field team** 和 **Service overview**。团队页展示真实派单情况，总览按工单状态和门店汇总。
+2. 点击 **Switch portal → Engineer workspace**。无需退出登录，同一账号立即进入自己的现场任务，页面从侧边栏切换为适合手机使用的任务卡片与底部导航。
+3. 从底部 **Completed work** 查看已完成任务；经理初始没有已完成任务，客户确认服务后会出现在这里。再通过 **Switch portal** 返回调度门户，查看全部客户工单与团队分工。
+4. 用 `customer1` 登录，展示客户门户的顶部导航：**Overview**、**My devices**、**Service tickets**。设备页可直接针对某台设备发起报修。
+
+![同一经理账号通过 Switch portal 切换业务门户](docs/images/portal-switching.png)
+
+| 门户               | 独立布局                   | 可浏览的真实页面             |
+| ------------------ | -------------------------- | ---------------------------- |
+| Customer portal    | 顶部横向导航、客户欢迎区   | 概览、设备、服务请求         |
+| Dispatch console   | 深色侧边栏、宽屏工作区     | 工单队列、现场团队、服务总览 |
+| Engineer workspace | 窄屏任务卡片、固定底部导航 | 我的任务、已完成任务         |
+| Service insights   | 分析侧边栏、汇总图表       | 工单状态分布、门店服务进度   |
+
+切换菜单只列出**已安装且当前账号有权访问**的门户。经理在调度门户看到全部工单，在工程师门户只看到派给自己的任务；页面布局和数据范围一起变化。Service insights 由管理员安装后，也会出现在经理的切换菜单中。
 
 ## 五分钟演示流程
 
@@ -170,6 +191,10 @@ APP_SERVER_HOST=0.0.0.0 pnpm dev
 
 ![运营调度台：跨客户工单列表与状态筛选](docs/images/dispatch-portal.png)
 
+通过 **Field team** 查看工作量并直接打开已派工单；**Service overview** 按状态和门店汇总同一批工单。
+
+![现场团队：三位服务人员的真实派单情况](docs/images/dispatch-team.png)
+
 1. 搜索刚才记录的工单编号，或切换 **Unassigned** 筛选。
 2. 打开工单详情，也可以从行末更多菜单选择 **Assign engineer**。
 3. 在详情中的工程师选择框选择 **Taylor Chen**，提交分配。
@@ -179,7 +204,7 @@ APP_SERVER_HOST=0.0.0.0 pnpm dev
 
 ### 工程师：接单与提交结果
 
-使用 `engineer1` 登录 **Engineer workspace**。任务卡片显示分配给当前工程师的工单、客户、地址、设备和状态；手机端也能完成操作。
+使用 `engineer1` 登录 **Engineer workspace**。任务卡片显示分配给当前工程师的工单、客户、地址、设备和状态；手机端也能完成操作。下图使用经理账号，演示同一账号切换后的现场视角。已完成任务单独放在底部的 Completed work 页面。
 
 <img src="docs/images/engineer-mobile.png" alt="工程师移动端：任务统计、状态筛选和任务卡片" width="390" />
 

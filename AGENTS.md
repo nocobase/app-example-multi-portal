@@ -6,7 +6,7 @@ Build application-specific features directly in the application by default. Use 
 
 ## Multi-portal template scope
 
-This application starts from Default and registers commercial multi-portal management on Client and Server. It ships the minimal portal generator, no business examples, and no preinstalled business portals. Administrators use the homepage workbench and System settings → Portal management; ordinary users retain the standard homepage. Users and permission management are registered. Follow [.agents/rules/multi-portal.md](.agents/rules/multi-portal.md) when changing portal composition or the host shell.
+This application starts from Default and registers commercial multi-portal management on Client and Server. ServiceHub adds four local business portals with independent layouts and a permission-aware homepage workbench for all signed-in users. Portals are installed explicitly by administrators through System settings → Portal management. Users and permission management are registered. Follow [.agents/rules/multi-portal.md](.agents/rules/multi-portal.md) when changing portal composition or the host shell.
 
 ## Keeping this file small
 

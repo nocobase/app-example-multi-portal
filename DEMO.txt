@@ -15,3 +15,9 @@ Host maintenance:
 
 The host script requires the existing host configuration and compiled client.
 New installations should follow pnpm dev in the README.
+
+Start the presentation with manager / ServiceHub2026!:
+  Dispatch console: sidebar, ticket queue, field team, service overview.
+  Switch portal -> Engineer workspace: same login, personal tasks, bottom navigation.
+  Customer portal: top navigation, devices, requests (sign in as customer1).
+The switcher shows only installed portals that the current account can access.

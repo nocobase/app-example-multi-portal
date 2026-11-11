@@ -91,13 +91,20 @@ export async function resetServiceData(
         description:
           'Equipment needs attention during service. Please arrange an inspection. Opening hours: 08:00–20:00 local time.',
         status,
-        engineerId: status === 'pending' ? null : 'engineer-' + ((i % 2) + 1),
+        engineerId:
+          status === 'pending'
+            ? null
+            : [1, 8].includes(i)
+              ? 'service-manager'
+              : 'engineer-' + ((i % 2) + 1),
         engineerName:
           status === 'pending'
             ? null
-            : i % 2 === 0
-              ? 'Taylor Chen'
-              : 'Sam Patel',
+            : [1, 8].includes(i)
+              ? 'Morgan Brooks'
+              : i % 2 === 0
+                ? 'Taylor Chen'
+                : 'Sam Patel',
         priority: i === 0 ? 'urgent' : 'normal',
         resolution: ['resolved', 'closed'].includes(status)
           ? 'Inspected the equipment, replaced worn parts, and verified normal operation.'

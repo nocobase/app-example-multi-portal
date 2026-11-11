@@ -83,7 +83,7 @@ pnpm nocobase config check
 
 English is the default interface language. Chinese remains available from the language menu. Both languages use the same fictional English demo dataset, with locations in London, Amsterdam, and Singapore; addresses are illustrative, and opening hours use each location's local time.
 
-On first startup, migrations and seeds automatically create the demo roles, 6 business accounts, 6 devices, and 12 tickets. The sample data covers 3 coffee shops and several stages of the service process.
+On first startup, migrations and seeds automatically create the demo roles, 7 business accounts, 6 devices, and 12 tickets. The sample data covers 3 coffee shops and several stages of the service process.
 
 The initial administrator is configured under `users.initialAdmin` in `config.yml`:
 
@@ -118,7 +118,7 @@ Sign in as the administrator, open **System settings → Portal management**, an
 | Customer portal    | Customer                               | Devices, repair requests, progress, service confirmation | Installed         |
 | Dispatch console   | Dispatcher                             | Ticket overview, engineer assignment, service tracking   | Installed         |
 | Engineer workspace | Engineer                               | Assigned tasks, acceptance, resolution reporting         | Installed         |
-| Service insights   | Administrator demonstrating extensions | Service analysis entry                                   | Leave uninstalled |
+| Service insights   | Administrator demonstrating extensions | Live status and location summaries                       | Leave uninstalled |
 
 Return to the home workbench to enter installed portals that your account can access. Installation and business permissions are separate requirements; installing a portal does not automatically grant access to every user.
 
@@ -126,16 +126,37 @@ Return to the home workbench to enter installed portals that your account can ac
 
 All business accounts below use **`ServiceHub2026!`** as their password. Sign in with either the username or email.
 
-| Role                                   | Name         | Username     | Email                           |
-| -------------------------------------- | ------------ | ------------ | ------------------------------- |
-| Customer · Harbor Coffee · London      | Alex Morgan  | `customer1`  | `customer-1@servicehub.example` |
-| Customer · Juniper Coffee · Amsterdam  | Sofia Rivera | `customer2`  | `customer-2@servicehub.example` |
-| Customer · Daylight Coffee · Singapore | Jamie Park   | `customer3`  | `customer-3@servicehub.example` |
-| Dispatcher                             | Jordan Lee   | `dispatcher` | `dispatcher@servicehub.example` |
-| Engineer                               | Taylor Chen  | `engineer1`  | `engineer-1@servicehub.example` |
-| Engineer                               | Sam Patel    | `engineer2`  | `engineer-2@servicehub.example` |
+| Role                                   | Name          | Username     | Email                           |
+| -------------------------------------- | ------------- | ------------ | ------------------------------- |
+| Customer · Harbor Coffee · London      | Alex Morgan   | `customer1`  | `customer-1@servicehub.example` |
+| Customer · Juniper Coffee · Amsterdam  | Sofia Rivera  | `customer2`  | `customer-2@servicehub.example` |
+| Customer · Daylight Coffee · Singapore | Jamie Park    | `customer3`  | `customer-3@servicehub.example` |
+| Dispatcher                             | Jordan Lee    | `dispatcher` | `dispatcher@servicehub.example` |
+| Engineer                               | Taylor Chen   | `engineer1`  | `engineer-1@servicehub.example` |
+| Engineer                               | Sam Patel     | `engineer2`  | `engineer-2@servicehub.example` |
+| Service manager                        | Morgan Brooks | `manager`    | `manager@servicehub.example`    |
 
 Customers access their own devices and tickets; engineers handle their assigned tasks; the dispatcher assigns tickets across customers. Use separate browser profiles for the three roles to switch between them easily. Regular tabs in the same browser share a login session.
+
+## Show the multi-portal experience first
+
+Start with **`manager` / `ServiceHub2026!`**. Morgan Brooks coordinates the team and handles field work, with two assigned tasks ready to demonstrate. This account has no customer or system administration permissions.
+
+1. Open **Dispatch console**. Use its sidebar to explore **Ticket queue**, **Field team**, and **Service overview**. Team assignments and status/location summaries use the actual tickets.
+2. Choose **Switch portal → Engineer workspace**. Without signing out, the same account enters its own field tasks. The sidebar gives way to task cards and mobile bottom navigation.
+3. Open **Completed work** from the bottom navigation to view finished tasks; it starts empty for the manager and fills as customers confirm completed work. Switch back to the dispatch portal to see all customers and team assignments again.
+4. Sign in as `customer1` to show the customer portal's top navigation: **Overview**, **My devices**, and **Service tickets**. Report a fault directly from a device on the devices page.
+
+![The manager switching between authorized portals without signing out](docs/images/portal-switching.png)
+
+| Portal             | Independent layout                             | Working pages                                     |
+| ------------------ | ---------------------------------------------- | ------------------------------------------------- |
+| Customer portal    | Top navigation and a customer welcome area     | Overview, devices, requests                       |
+| Dispatch console   | Dark sidebar and a wide operations workspace   | Ticket queue, field team, service overview        |
+| Engineer workspace | Focused task cards and fixed bottom navigation | My tasks, completed work                          |
+| Service insights   | Analytics sidebar and live summaries           | Status distribution, service progress by location |
+
+The switcher lists only portals that are **installed and authorized for the current account**. The manager sees all tickets in dispatch and only personal assignments in the engineer portal. Layout and data scope change together. After an administrator installs Service insights, it also appears in the manager's switcher.
 
 ## Five-minute walkthrough
 
@@ -170,6 +191,10 @@ Sign in as `dispatcher` and enter **Dispatch console**. This portal brings toget
 
 ![Dispatch console with tickets across customers and status filters](docs/images/dispatch-portal.png)
 
+Use **Field team** to inspect workload and open an assigned ticket directly. **Service overview** summarizes the same tickets by status and location.
+
+![Field team with real assignments across three service staff](docs/images/dispatch-team.png)
+
 1. Search for the ticket ID, or select **Unassigned**.
 2. Open its details, or choose **Assign engineer** from the row's more menu.
 3. Select **Taylor Chen** in the engineer field and submit the assignment.
@@ -180,6 +205,8 @@ Continue with `engineer1`. If you assign the ticket to Sam Patel, use `engineer2
 ### Engineers: accept a task and report the resolution
 
 Sign in as `engineer1` and enter **Engineer workspace**. Task cards show the assigned ticket, customer, address, device, and status. The same operations are available on mobile.
+
+The screenshot uses the manager account after switching into field work. Completed tasks have their own **Completed work** page in the bottom navigation.
 
 <img src="docs/images/engineer-mobile.png" alt="Engineer mobile workspace with statistics, status filters, and task cards" width="390" />
 

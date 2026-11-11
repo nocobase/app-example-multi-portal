@@ -1,28 +1,32 @@
 import type { ReactElement, ReactNode } from 'react';
-import { useTranslation } from '@nocobase/i18n/client';
-import {
-  PortalLayout,
-  ChartNoAxesCombined,
-  type PortalNavigationItem,
-} from '@nocobase/app-plugin-multi-portal/client/workspace';
-import portal from '../portal.js';
+
+export interface LayoutProps {
+  readonly children: ReactNode;
+  readonly brand: ReactNode;
+  readonly switcher: ReactNode;
+  readonly navigation: ReactNode;
+  readonly account: ReactNode;
+  readonly footer: ReactNode;
+}
+
 export default function Layout({
   children,
-}: {
-  readonly children: ReactNode;
-}): ReactElement {
-  const { t } = useTranslation('@nocobase/app-plugin-multi-portal');
-  const navigation: readonly PortalNavigationItem[] = [
-    {
-      path: portal.entry,
-      title: t('overview'),
-      icon: ChartNoAxesCombined,
-      end: true,
-    },
-  ];
+  brand,
+  switcher,
+  navigation,
+  account,
+  footer,
+}: LayoutProps): ReactElement {
   return (
-    <PortalLayout portal={portal} navigation={navigation}>
-      {children}
-    </PortalLayout>
+    <div className='sh-field-layout'>
+      <header className='sh-field-header'>
+        <div className='sh-brand'>{brand}</div>
+        {account}
+      </header>
+      <div className='sh-field-switcher'>{switcher}</div>
+      <main className='sh-field-content'>{children}</main>
+      <footer className='sh-layout-footer'>{footer}</footer>
+      <div className='sh-field-navigation'>{navigation}</div>
+    </div>
   );
 }
