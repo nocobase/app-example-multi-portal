@@ -1,17 +1,19 @@
 # ServiceHub
 
-基于 NocoBase 3 的多门户设备服务 Demo。客户、调度员和工程师围绕同一张工单协作，通过不同门户看到各自需要的信息和操作。
+English | [简体中文](README.zh-CN.md)
 
-## 安装
+A multi-portal equipment service demo built with NocoBase 3. Customers, dispatchers, and engineers collaborate on the same service ticket through portals tailored to their responsibilities.
 
-### 1. 准备环境
+## Installation
 
-- Node.js **24 或更高版本**。
-- pnpm **11.7.0**。
-- Git，以及 `nocobase/ServiceHub` 仓库的访问权限。
-- NocoBase 私有包源的读取权限：本项目使用商业多门户插件。
+### 1. Prerequisites
 
-默认使用 SQLite，无需单独安装数据库服务。
+- Node.js **24 or later**.
+- pnpm **11.7.0**.
+- Git and access to the `nocobase/ServiceHub` repository.
+- Read access to the NocoBase private package registry. This application uses the commercial multi-portal plugin.
+
+The default database is SQLite; no separate database service is required.
 
 ```bash
 node --version
@@ -19,57 +21,57 @@ npm install -g pnpm@11.7.0
 pnpm --version
 ```
 
-### 2. 克隆仓库
+### 2. Clone the repository
 
 ```bash
 git clone https://github.com/nocobase/ServiceHub.git
 cd ServiceHub
 ```
 
-直接安装这个仓库即可，不需要再通过 `create-app` 创建应用。
+Install this repository directly. You do not need to generate another application with `create-app`.
 
-### 3. 配置包源并安装依赖
+### 3. Configure the registry and install dependencies
 
-使用具有读取权限的账号登录 NocoBase 私有包源：
+Sign in to the NocoBase private registry with an account that has read access:
 
 ```bash
 pnpm login --registry=https://pkg-v3.nocobase.com/ --scope=@nocobase
 ```
 
-按提示输入账号信息，密码使用私有包源提供的读取令牌（`nbr_…`）。此操作会在用户级配置中设置 `@nocobase` 的包源；其他依赖仍使用默认 npm 源。不要把令牌写进仓库。
+Enter your account details when prompted, using the registry's read token (`nbr_…`) as the password. This configures the `@nocobase` scope in your user-level configuration; other dependencies continue to use the default npm registry. Do not commit the token.
 
 ```bash
 pnpm config get @nocobase:registry
-# 应输出 https://pkg-v3.nocobase.com/
+# Expected: https://pkg-v3.nocobase.com/
 
 pnpm install
 ```
 
-私有源同时提供商业包和开源 `@nocobase` 包。若错误信息指向 `registry.npmjs.org/@nocobase/app-plugin-multi-portal`，先检查作用域包源配置。
+The private registry serves both commercial and open-source `@nocobase` packages. If an error references `registry.npmjs.org/@nocobase/app-plugin-multi-portal`, check the scoped registry configuration first.
 
-## 初始化 Demo
+## Initialize the demo
 
-以下步骤用于新安装的应用，须在第一次启动前完成。
+Complete these steps before starting a new installation for the first time.
 
-### 1. 生成配置
+### 1. Generate the configuration
 
 ```bash
 pnpm nocobase config init --dialect sqlite
 ```
 
-命令生成本机的 `config.yml`，并初始化配置密钥。不要直接使用 [config.example.yml](config.example.yml) 中的占位密钥。
+This creates a local `config.yml` and initializes its encryption keys. Do not use the placeholder key from [config.example.yml](config.example.yml).
 
-这里涉及三类不同凭据：
+There are three separate types of credentials:
 
-| 凭据                             | 用途                                             |
-| -------------------------------- | ------------------------------------------------ |
-| 包源读取令牌                     | 下载 NocoBase 依赖                               |
-| `config.yml` 中的 `secrets.keys` | 加密应用保存的敏感信息，并用于派生登录和会话密钥 |
-| 管理员及演示账号密码             | 登录 ServiceHub                                  |
+| Credential                               | Purpose                                                                         |
+| ---------------------------------------- | ------------------------------------------------------------------------------- |
+| Registry read token                      | Download NocoBase dependencies                                                  |
+| `secrets.keys` in `config.yml`           | Encrypt stored sensitive information and derive authentication and session keys |
+| Administrator and demo account passwords | Sign in to ServiceHub                                                           |
 
-`config.yml` 已被 Git 忽略。迁移已有数据库时应保留原配置密钥；新建独立 Demo 时生成自己的密钥。
+`config.yml` is ignored by Git. Preserve the original keys when migrating an existing database; generate new keys for a separate demo installation.
 
-### 2. 开启演示数据
+### 2. Enable sample data
 
 ```bash
 pnpm nocobase config set app.sampleData=true
@@ -77,139 +79,141 @@ pnpm nocobase config set client.app.title=ServiceHub i18n.defaultLocale=zh-CN cl
 pnpm nocobase config check
 ```
 
-首次启动会自动执行数据库迁移和种子数据，创建演示角色、6 个业务账号、6 台设备及 12 张工单。演示数据对应 3 家咖啡门店，覆盖报修、派单、处理和确认等状态。
+The demo's business pages and sample records currently use Chinese. The command above selects the Chinese interface to match the screenshots; the instructions below include the relevant Chinese button labels.
 
-默认初始管理员在 `config.yml` 的 `users.initialAdmin` 中配置：
+On first startup, migrations and seeds automatically create the demo roles, 6 business accounts, 6 devices, and 12 tickets. The sample data covers 3 coffee shops and several stages of the service process.
 
-- 用户名：`nocobase`
-- 邮箱：`admin@nocobase.com`（也可用于登录）
-- 初始密码：`admin123`
+The initial administrator is configured under `users.initialAdmin` in `config.yml`:
 
-如需修改初始管理员，请在首次启动前修改配置。数据库已有账号后，修改这段配置不会重置账号或密码。演示账号使用公开的测试密码，请只在隔离的演示环境中使用。
+- Username: `nocobase`
+- Email: `admin@nocobase.com` (also accepted at sign-in)
+- Initial password: `admin123`
 
-## 启动应用
+Change this configuration before the first startup if you want different initial credentials. Once an account exists, editing these values does not reset it or its password. Demo passwords are public test credentials; use them only in an isolated demo environment.
+
+## Start the application
 
 ```bash
 pnpm dev
 ```
 
-打开终端就绪信息中打印的应用 URL，保留完整路径（默认包含 `/main/`）。不要使用 Vite 的内部端口作为应用入口。
+Open the application URL printed in the terminal's ready message, including its full path (`/main/` by default). Do not use Vite's internal port as the application entry point.
 
-需要手机或其他局域网设备访问时，可在 macOS / Linux 中运行：
+For access from a phone or another device on your LAN, run this on macOS or Linux:
 
 ```bash
 APP_SERVER_HOST=0.0.0.0 pnpm dev
 ```
 
-使用本机实际局域网 IP 和就绪信息中的应用端口访问。通过临时公网隧道演示时，将隧道指向应用入口端口，保留应用路径，并将公网来源加入 `auth.trustedOrigins`；开发模式按需配置 `APP_ALLOWED_HOSTS`。临时公网地址随隧道停止而失效。
+Use the machine's actual LAN IP and the application port from the ready message. For a temporary public tunnel, forward the application entry port, preserve the application path, and add the public origin to `auth.trustedOrigins`. Configure `APP_ALLOWED_HOSTS` as needed in development. A temporary public URL expires when its tunnel stops.
 
-## 准备门户
+## Prepare the portals
 
-管理员登录后，进入 **系统设置 → 门户管理（Portal management）**，安装前三个业务门户。门户代码已随仓库提供，安装操作会启用对应门户。
+Sign in as the administrator, open **System settings → Portal management**, and install the first three business portals. Their code is included in the repository; installation enables each portal.
 
-| 门户             | 演示角色       | 主要内容                               | 演示前状态 |
-| ---------------- | -------------- | -------------------------------------- | ---------- |
-| 客户服务台       | 客户           | 我的设备、发起报修、进度查询、服务确认 | 已安装     |
-| 运营调度台       | 调度员         | 工单总览、分配工程师、跟踪服务进度     | 已安装     |
-| 工程师工作台     | 工程师         | 分配给我的任务、接单、填写处理结果     | 已安装     |
-| Service insights | 管理员演示扩展 | 服务分析入口                           | 保留未安装 |
+| Portal                             | Demo role                              | Main features                                            | State to prepare  |
+| ---------------------------------- | -------------------------------------- | -------------------------------------------------------- | ----------------- |
+| Customer service desk (客户服务台) | Customer                               | Devices, repair requests, progress, service confirmation | Installed         |
+| Dispatch operations (运营调度台)   | Dispatcher                             | Ticket overview, engineer assignment, service tracking   | Installed         |
+| Engineer workspace (工程师工作台)  | Engineer                               | Assigned tasks, acceptance, resolution reporting         | Installed         |
+| Service insights                   | Administrator demonstrating extensions | Service analysis entry                                   | Leave uninstalled |
 
-回到首页工作台即可进入已安装且有权访问的门户。门户是否安装和账号是否有业务权限是两个独立条件；安装门户不会给所有用户自动授权。
+Return to the home workbench to enter installed portals that your account can access. Installation and business permissions are separate requirements; installing a portal does not automatically grant access to every user.
 
-## 演示账号
+## Demo accounts
 
-以下业务账号密码统一为 **`ServiceHub2026!`**。用户名或邮箱均可用于登录。
+All business accounts below use **`ServiceHub2026!`** as their password. Sign in with either the username or email.
 
-| 角色            | 姓名   | 用户名       | 邮箱                            |
-| --------------- | ------ | ------------ | ------------------------------- |
-| 客户 · 星河咖啡 | 陈小满 | `customer1`  | `customer-1@servicehub.example` |
-| 客户 · 山野咖啡 | 周晴   | `customer2`  | `customer-2@servicehub.example` |
-| 客户 · 白昼咖啡 | 许乐   | `customer3`  | `customer-3@servicehub.example` |
-| 调度员          | 沈悦   | `dispatcher` | `dispatcher@servicehub.example` |
-| 工程师          | 林晨   | `engineer1`  | `engineer-1@servicehub.example` |
-| 工程师          | 顾川   | `engineer2`  | `engineer-2@servicehub.example` |
+| Role                                 | Name                  | Username     | Email                           |
+| ------------------------------------ | --------------------- | ------------ | ------------------------------- |
+| Customer · Xinghe Coffee (星河咖啡)  | Chen Xiaoman (陈小满) | `customer1`  | `customer-1@servicehub.example` |
+| Customer · Shanye Coffee (山野咖啡)  | Zhou Qing (周晴)      | `customer2`  | `customer-2@servicehub.example` |
+| Customer · Baizhou Coffee (白昼咖啡) | Xu Le (许乐)          | `customer3`  | `customer-3@servicehub.example` |
+| Dispatcher                           | Shen Yue (沈悦)       | `dispatcher` | `dispatcher@servicehub.example` |
+| Engineer                             | Lin Chen (林晨)       | `engineer1`  | `engineer-1@servicehub.example` |
+| Engineer                             | Gu Chuan (顾川)       | `engineer2`  | `engineer-2@servicehub.example` |
 
-客户只访问自己的设备和工单，工程师处理分配给自己的任务，调度员负责跨客户派单。使用不同浏览器配置文件分别登录三个角色，可以方便地切换展示；同一浏览器的普通标签页共享登录会话。
+Customers access their own devices and tickets; engineers handle their assigned tasks; the dispatcher assigns tickets across customers. Use separate browser profiles for the three roles to switch between them easily. Regular tabs in the same browser share a login session.
 
-## 五分钟演示流程
+## Five-minute walkthrough
 
-1. **客户报修**：用 `customer1` 登录客户服务台，选择 Linea 商用咖啡机，提交一条“咖啡机无法加热”的报修。
-2. **调度派单**：用 `dispatcher` 登录运营调度台，找到新工单，将它分配给林晨。
-3. **工程师处理**：用 `engineer1` 登录工程师工作台，接单、填写处理结果并完成服务。
-4. **客户确认**：回到 `customer1`，查看处理记录，确认服务并评价。
-5. **展示门户扩展**：管理员在门户管理中安装 Service insights，再回工作台查看新增入口；卸载后入口隐藏。
+1. **Report a fault:** sign in as `customer1`, select the Linea coffee machine, and submit a request titled “咖啡机无法加热” (coffee machine not heating).
+2. **Assign an engineer:** sign in as `dispatcher`, find the new ticket, and assign it to Lin Chen (林晨).
+3. **Complete the work:** sign in as `engineer1`, accept the task, record the resolution, and complete the service.
+4. **Confirm the service:** return to `customer1`, review the resolution, confirm completion, and rate the service.
+5. **Show portal extensions:** as the administrator, install Service insights and return to the workbench to see its entry. Uninstall it to hide the entry again.
 
-重点展示同一业务在不同角色下的视角、数据范围和可执行操作，以及门户可以独立启用的能力。手机端也可完成工单操作。客户与调度门户使用响应式表格，行操作集中在更多菜单中；工程师门户使用任务卡片。
+Highlight each role's view of the same process, its data scope, its available actions, and the ability to enable portals independently. Ticket operations also work on mobile. Customer and dispatcher portals use responsive tables with row actions in a more menu; the engineer portal uses task cards.
 
-## 使用说明与截图
+## Usage guide and screenshots
 
-以下截图来自实际运行的 Demo，使用预置的虚构账号和业务数据。截图展示初始数据中的不同工单，不是同一张新建工单的连续状态；实际数量会随操作变化。
+These screenshots show the running demo with fictional accounts and sample records. They show different preloaded tickets, rather than consecutive states of one newly created ticket. Counts change as you use the application.
 
-### 客户：报修与查询进度
+### Customers: report a fault and track progress
 
-使用 `customer1` 登录并进入 **客户服务台**。上方显示设备和服务统计，“我的设备”列出当前客户的设备，下方是该客户的服务工单。
+Sign in as `customer1` and enter **Customer service desk (客户服务台)**. The top section shows device and service statistics, followed by the customer's devices and service tickets.
 
-![客户服务台：设备概览、报修入口与服务工单](docs/images/customer-portal.png)
+![Customer service desk with device overview, repair request entry, and service tickets](docs/images/customer-portal.png)
 
-1. 点击右上角 **发起报修**，选择报修设备。
-2. 填写问题标题和详细描述，选择紧急程度。例如标题“咖啡机无法加热”，描述“今天开店后水温一直偏低，重启后仍无法正常加热”。
-3. 点击 **提交报修**。成功后工单出现在列表，状态为 **待分配**，记下工单编号供后续演示查找。
-4. 点击工单标题，或行末更多菜单中的 **查看详情**，查看设备、工程师、问题描述和处理进度。
+1. Click **Report a fault (发起报修)** in the upper-right corner and select the device.
+2. Enter a title, description, and urgency. For example: “Coffee machine not heating”; “The water temperature has stayed low since opening this morning, even after restarting.”
+3. Click **Submit request (提交报修)**. The ticket appears as **Awaiting assignment (待分配)**. Note its ID for the following steps.
+4. Click the ticket title or **View details (查看详情)** in the row's more menu to see the device, engineer, description, and progress.
 
-可以按工单编号、问题或门店搜索，也可切换状态筛选。客户账号只能看到自己的数据；切换到 `customer2` 可以展示不同客户间的数据隔离。
+Search by ticket ID, issue, or shop, or filter by status. Customers see only their own data; switch to `customer2` to demonstrate customer data isolation.
 
-### 调度员：分配工程师
+### Dispatchers: assign an engineer
 
-使用 `dispatcher` 登录并进入 **运营调度台**。这里汇总不同客户的服务工单，适合统一查看状态和安排服务人员。
+Sign in as `dispatcher` and enter **Dispatch operations (运营调度台)**. This portal brings together tickets from different customers for service coordination.
 
-![运营调度台：跨客户工单列表与状态筛选](docs/images/dispatch-portal.png)
+![Dispatch operations with tickets across customers and status filters](docs/images/dispatch-portal.png)
 
-1. 搜索刚才记录的工单编号，或切换 **待分配** 筛选。
-2. 打开工单详情，也可以从行末更多菜单选择 **分配工程师**。
-3. 在详情中的工程师选择框选择 **林晨**，提交分配。
-4. 分配成功后，工单变为 **待接单**，工程师字段显示林晨。
+1. Search for the ticket ID, or select **Awaiting assignment (待分配)**.
+2. Open its details, or choose **Assign engineer (分配工程师)** from the row's more menu.
+3. Select **Lin Chen (林晨)** in the engineer field and submit the assignment.
+4. The ticket becomes **Awaiting acceptance (待接单)** and displays Lin Chen as its engineer.
 
-后续用 `engineer1` 跟进这张工单。若分配给顾川，则应使用 `engineer2` 登录。
+Continue with `engineer1`. If you assign the ticket to Gu Chuan (顾川), use `engineer2` instead.
 
-### 工程师：接单与提交结果
+### Engineers: accept a task and report the resolution
 
-使用 `engineer1` 登录 **工程师工作台**。任务卡片显示分配给当前工程师的工单、客户、地址、设备和状态；手机端也能完成操作。
+Sign in as `engineer1` and enter **Engineer workspace (工程师工作台)**. Task cards show the assigned ticket, customer, address, device, and status. The same operations are available on mobile.
 
-<img src="docs/images/engineer-mobile.png" alt="工程师移动端：任务统计、状态筛选和任务卡片" width="390" />
+<img src="docs/images/engineer-mobile.png" alt="Engineer mobile workspace with statistics, status filters, and task cards" width="390" />
 
-1. 在 **全部** 中找到新分配的任务，点击 **查看任务**。
-2. 在详情中点击 **接单并开始处理**，状态变为 **处理中**。
-3. 处理完成后再次打开任务，填写 **处理结果**，例如“清理加热管水垢，更换温度传感器，试运行后水温恢复正常”。
-4. 点击 **提交处理结果**，状态变为 **待确认**，等待客户确认。
+1. Find the newly assigned task under **All (全部)** and click **View task (查看任务)**.
+2. Click **Accept and start work (接单并开始处理)** in its details. The status becomes **In progress (处理中)**.
+3. After completing the work, reopen the task and enter the **Resolution (处理结果)**. For example: “Descaled the heating element, replaced the temperature sensor, and confirmed normal water temperature during a test run.”
+4. Click **Submit resolution (提交处理结果)**. The status becomes **Awaiting confirmation (待确认)**.
 
-只有分配给当前工程师且状态允许的任务，才会出现相应操作。找不到任务时，先切回“全部”，再确认调度员分配的工程师账号。
+Actions appear only for tasks assigned to the current engineer and in the appropriate state. If a task is missing, switch back to All and check which engineer the dispatcher selected.
 
-### 客户：确认并评价
+### Customers: confirm and rate the service
 
-回到 `customer1` 的客户服务台，必要时刷新页面获取最新状态。
+Return to `customer1`'s customer portal. Refresh the page if needed to load the latest status.
 
-1. 切换 **待确认**，找到刚才的工单。
-2. 打开详情，阅读工程师填写的处理结果。
-3. 选择服务评价并提交确认，也可以从行末菜单进入 **确认并评价**。
-4. 工单变为 **已完成**，详情保留处理结果和服务评价。
+1. Select **Awaiting confirmation (待确认)** and find the ticket.
+2. Open its details and read the engineer's resolution.
+3. Select a rating and submit the confirmation. You can also enter through **Confirm and rate (确认并评价)** in the row's menu.
+4. The ticket becomes **Completed (已完成)**, retaining its resolution and rating.
 
-完整状态流程为：**待分配 → 待接单 → 处理中 → 待确认 → 已完成**。操作按钮随角色和当前状态变化，不能跳过前置步骤。
+The full sequence is **Awaiting assignment → Awaiting acceptance → In progress → Awaiting confirmation → Completed**. Available actions depend on the role and current state; preceding steps cannot be skipped.
 
-### 管理员：门户管理与重复演示
+### Administrators: manage portals and repeat the demo
 
-管理员进入 **系统设置 → 门户管理**，通过每行更多菜单安装、打开或卸载门户。可安装 Service insights，回到工作台展示新增入口，再卸载它展示入口隐藏。
+Open **System settings → Portal management** and use each row's more menu to install, open, or uninstall a portal. Install Service insights to show its new workbench entry, then uninstall it to hide the entry.
 
-下一轮演示前，可在工作台使用 **恢复演示数据**。恢复会删除本轮新增工单并重建预置业务数据；账号、角色和门户安装状态不变，具体范围见下节。
+Before another walkthrough, use **Restore demo data (恢复演示数据)** on the workbench. This removes tickets created during the walkthrough and recreates the sample business data. Accounts, roles, and portal installation states remain unchanged; see the next section for details.
 
-## 恢复演示数据
+## Restore demo data
 
-管理员在首页工作台点击 **恢复演示数据** 并确认，可以清除当前 Demo 的设备、工单及处理记录，恢复预置的 12 张工单，方便下一轮演示。
+As the administrator, click **Restore demo data (恢复演示数据)** on the home workbench and confirm. This replaces the demo devices, tickets, and processing records with the initial dataset of 12 tickets.
 
-- 账号、角色和门户安装状态会保留。
-- 仅开启 `app.sampleData` 时允许恢复。
-- 此功能不会补建缺失的演示账号或角色。
+- Accounts, roles, and portal installation states are preserved.
+- Restoration requires `app.sampleData` to be enabled.
+- This operation does not recreate missing demo accounts or roles.
 
-如果首次初始化时没有开启演示数据，停止开发服务，执行：
+If sample data was disabled during the first initialization, stop the development server and run:
 
 ```bash
 pnpm nocobase config set app.sampleData=true
@@ -217,42 +221,42 @@ pnpm nocobase db sample
 pnpm dev
 ```
 
-`db sample` 用于补跑之前跳过的样例初始化，仅适用于开发环境；生产部署会拒绝执行。不要用清空整个数据库代替日常演示重置。
+`db sample` runs previously skipped sample initialization in development; production deployments reject it. Do not clear the entire database just to reset a walkthrough.
 
-## 常见问题
+## Troubleshooting
 
-### 安装依赖出现 401、403 或 404
+### Dependency installation returns 401, 403, or 404
 
-检查 `@nocobase` 作用域是否指向 `https://pkg-v3.nocobase.com/`，以及读取令牌是否有效、具有相应包的权限。npmjs 上的商业包 404 不能说明私有包未发布。
+Check that the `@nocobase` scope points to `https://pkg-v3.nocobase.com/` and that your read token is valid and authorized for the packages. A commercial package returning 404 on npmjs does not mean it is unpublished in the private registry.
 
-### 提示配置密钥未配置
+### Configuration keys are missing
 
-新安装先执行 `pnpm nocobase config init --dialect sqlite`，再执行 `pnpm nocobase config check`。已有数据库应恢复原来的 `config.yml` 或密钥配置，不要随意替换密钥。
+For a new installation, run `pnpm nocobase config init --dialect sqlite`, then `pnpm nocobase config check`. For an existing database, restore the original `config.yml` or key configuration rather than replacing its keys arbitrarily.
 
-### 能登录，但看不到业务门户
+### Sign-in works, but business portals are missing
 
-先由管理员确认门户已安装，再确认当前用户具有对应角色。用新注册账号登录不会自动获得演示角色；使用上面的演示账号，或在用户与权限管理中明确分配角色。
+Ask the administrator to confirm that the portal is installed and the user has the appropriate role. Newly registered accounts do not automatically receive demo roles. Use a demo account or explicitly assign a role through user and permission management.
 
-### 演示账号不存在或密码不对
+### Demo accounts are missing or their passwords do not work
 
-确认第一次初始化前已经开启 `app.sampleData`。若样例初始化被跳过，使用上面的 `db sample` 流程。管理员密码与业务演示账号密码不同；已有实例以其实际账号设置为准。
+Check that `app.sampleData` was enabled before initialization. If sample initialization was skipped, follow the `db sample` steps above. The administrator uses a different password from the business demo accounts; existing installations retain their actual account settings.
 
-### 默认语言或主题没有变化
+### The default language or theme does not change
 
-浏览器已保存的个人选择优先于默认配置。通过界面切换语言或主题，或使用新的浏览器配置文件查看默认效果。
+Saved browser preferences take precedence over configuration defaults. Change the language or theme through the interface, or use a new browser profile to see the defaults.
 
-## 开发与部署
+## Development and deployment
 
-业务前端位于 [client/pages/servicehub](client/pages/servicehub)，接口位于 [server/routes/servicehub.ts](server/routes/servicehub.ts)，数据初始化位于 [database/main/seeds](database/main/seeds)。四个门户包位于 [packages](packages)。
+Business pages live in [client/pages/servicehub](client/pages/servicehub), API routes in [server/routes/servicehub.ts](server/routes/servicehub.ts), and seed data in [database/main/seeds](database/main/seeds). The four portal packages are under [packages](packages).
 
-| 命令             | 用途                               |
-| ---------------- | ---------------------------------- |
-| `pnpm dev`       | 启动开发服务                       |
-| `pnpm typecheck` | 检查客户端、服务端和工具代码的类型 |
-| `pnpm test`      | 运行自动化测试                     |
-| `pnpm build`     | 构建应用及运行时依赖               |
-| `pnpm start`     | 启动构建后的应用                   |
+| Command          | Purpose                                            |
+| ---------------- | -------------------------------------------------- |
+| `pnpm dev`       | Start the development server                       |
+| `pnpm typecheck` | Check client, server, and tooling types            |
+| `pnpm test`      | Run automated tests                                |
+| `pnpm build`     | Build the application and its runtime dependencies |
+| `pnpm start`     | Start the built application                        |
 
-生产部署需单独准备配置、持久化存储及包源凭据，详见 [构建与部署说明](.agents/rules/build-and-deploy.md)。[scripts/start-demo.sh](scripts/start-demo.sh) 是现有 Linux 演示主机的维护脚本，依赖该主机的服务配置和已构建前端；新安装使用上面的 `pnpm dev` 流程。
+Production deployment requires separate configuration, persistent storage, and registry credentials. See [build and deployment notes](.agents/rules/build-and-deploy.md). [scripts/start-demo.sh](scripts/start-demo.sh) is a maintenance script for the existing Linux demo host; it depends on that host's service configuration and a built frontend. For a new installation, use the `pnpm dev` instructions above.
 
-当前已验证角色协作流程、权限检查和前端构建；配置私有源后的独立依赖解析也已通过。完整的全新环境安装及可移植生产包尚未完成端到端验证。仓库暂未提交依赖锁文件，不同时间安装可能解析到不同的兼容版本。
+Role collaboration, permission checks, and frontend compilation have been verified. Independent dependency resolution with the private registry has also passed. A complete clean installation and a portable production bundle have not yet been verified end to end. The repository does not currently include a dependency lockfile, so installation at different times may resolve different compatible versions.
