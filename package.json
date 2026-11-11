@@ -1,5 +1,5 @@
 {
-  "name": "app-demo-service-hub",
+  "name": "app-example-multi-portal",
   "displayName": "ServiceHub",
   "version": "0.1.0-beta.1",
   "type": "module",
@@ -124,7 +124,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/nocobase/app-demo-service-hub.git"
+    "url": "git+https://github.com/nocobase/app-example-multi-portal.git"
   },
   "scripts": {
     "postinstall": "nocobase skills sync",

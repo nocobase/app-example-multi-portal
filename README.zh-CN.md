@@ -1,8 +1,8 @@
-# ServiceHub
+# 多门户示例 — ServiceHub
 
 [English](README.MD) | 简体中文
 
-基于 NocoBase 3 的多门户设备服务 Demo。客户、调度员和工程师围绕同一张工单协作，通过不同门户看到各自需要的信息和操作。
+基于 NocoBase 3 的多门户示例应用，展示共享业务数据、角色权限和跨门户协作。ServiceHub 以设备服务为业务场景，让客户、调度员和工程师通过各自的门户，围绕同一张工单完成协作。
 
 ![ServiceHub 工作台：客户、调度与工程师的专属门户](docs/images/admin-workbench.png)
 
@@ -12,7 +12,7 @@
 
 - Node.js **24 或更高版本**。
 - pnpm **11.7.0**。
-- Git，以及 `nocobase/app-demo-service-hub` 仓库的访问权限。
+- Git，以及 `nocobase/app-example-multi-portal` 仓库的访问权限。
 - NocoBase 私有包源的读取权限：本项目使用商业多门户插件。
 
 默认使用 SQLite，无需单独安装数据库服务。
@@ -26,8 +26,8 @@ pnpm --version
 ### 2. 克隆仓库
 
 ```bash
-git clone https://github.com/nocobase/app-demo-service-hub.git
-cd app-demo-service-hub
+git clone https://github.com/nocobase/app-example-multi-portal.git
+cd app-example-multi-portal
 ```
 
 直接安装这个仓库即可，不需要再通过 `create-app` 创建应用。

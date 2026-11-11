@@ -1,8 +1,8 @@
-# ServiceHub
+# Multi-portal Example — ServiceHub
 
 English | [简体中文](README.zh-CN.md)
 
-A multi-portal equipment service demo built with NocoBase 3. Customers, dispatchers, and engineers collaborate on the same service ticket through portals tailored to their responsibilities.
+A NocoBase 3 example application demonstrating multiple portals, shared business data, role-based permissions, and cross-portal collaboration. ServiceHub brings these capabilities together in an equipment service scenario: customers, dispatchers, and engineers work on the same ticket through dedicated portals.
 
 ![ServiceHub workbench with dedicated customer, dispatch, and engineer portals](docs/images/admin-workbench.png)
 
@@ -12,7 +12,7 @@ A multi-portal equipment service demo built with NocoBase 3. Customers, dispatch
 
 - Node.js **24 or later**.
 - pnpm **11.7.0**.
-- Git and access to the `nocobase/app-demo-service-hub` repository.
+- Git and access to the `nocobase/app-example-multi-portal` repository.
 - Read access to the NocoBase private package registry. This application uses the commercial multi-portal plugin.
 
 The default database is SQLite; no separate database service is required.
@@ -26,8 +26,8 @@ pnpm --version
 ### 2. Clone the repository
 
 ```bash
-git clone https://github.com/nocobase/app-demo-service-hub.git
-cd app-demo-service-hub
+git clone https://github.com/nocobase/app-example-multi-portal.git
+cd app-example-multi-portal
 ```
 
 Install this repository directly. You do not need to generate another application with `create-app`.

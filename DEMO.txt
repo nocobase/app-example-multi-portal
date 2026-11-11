@@ -1,4 +1,4 @@
-ServiceHub — equipment service demo
+Multi-portal Example — ServiceHub
 
 See README.MD (English) or README.zh-CN.md (Chinese) for installation,
 accounts, the walkthrough, and screenshots.
