@@ -75,11 +75,11 @@ There are three separate types of credentials:
 
 ```bash
 pnpm nocobase config set app.sampleData=true
-pnpm nocobase config set client.app.title=ServiceHub i18n.defaultLocale=zh-CN client.app.defaultTheme=compact
+pnpm nocobase config set client.app.title=ServiceHub i18n.defaultLocale=en-US client.app.defaultTheme=compact
 pnpm nocobase config check
 ```
 
-The demo's business pages and sample records currently use Chinese. The command above selects the Chinese interface to match the screenshots; the instructions below include the relevant Chinese button labels.
+English is the default interface language. Chinese remains available from the language menu. Both languages use the same fictional English demo dataset, with locations in London, Amsterdam, and Singapore; addresses are illustrative, and opening hours use each location's local time.
 
 On first startup, migrations and seeds automatically create the demo roles, 6 business accounts, 6 devices, and 12 tickets. The sample data covers 3 coffee shops and several stages of the service process.
 
@@ -111,12 +111,12 @@ Use the machine's actual LAN IP and the application port from the ready message.
 
 Sign in as the administrator, open **System settings → Portal management**, and install the first three business portals. Their code is included in the repository; installation enables each portal.
 
-| Portal                             | Demo role                              | Main features                                            | State to prepare  |
-| ---------------------------------- | -------------------------------------- | -------------------------------------------------------- | ----------------- |
-| Customer service desk (客户服务台) | Customer                               | Devices, repair requests, progress, service confirmation | Installed         |
-| Dispatch operations (运营调度台)   | Dispatcher                             | Ticket overview, engineer assignment, service tracking   | Installed         |
-| Engineer workspace (工程师工作台)  | Engineer                               | Assigned tasks, acceptance, resolution reporting         | Installed         |
-| Service insights                   | Administrator demonstrating extensions | Service analysis entry                                   | Leave uninstalled |
+| Portal             | Demo role                              | Main features                                            | State to prepare  |
+| ------------------ | -------------------------------------- | -------------------------------------------------------- | ----------------- |
+| Customer portal    | Customer                               | Devices, repair requests, progress, service confirmation | Installed         |
+| Dispatch console   | Dispatcher                             | Ticket overview, engineer assignment, service tracking   | Installed         |
+| Engineer workspace | Engineer                               | Assigned tasks, acceptance, resolution reporting         | Installed         |
+| Service insights   | Administrator demonstrating extensions | Service analysis entry                                   | Leave uninstalled |
 
 Return to the home workbench to enter installed portals that your account can access. Installation and business permissions are separate requirements; installing a portal does not automatically grant access to every user.
 
@@ -124,21 +124,21 @@ Return to the home workbench to enter installed portals that your account can ac
 
 All business accounts below use **`ServiceHub2026!`** as their password. Sign in with either the username or email.
 
-| Role                                 | Name                  | Username     | Email                           |
-| ------------------------------------ | --------------------- | ------------ | ------------------------------- |
-| Customer · Xinghe Coffee (星河咖啡)  | Chen Xiaoman (陈小满) | `customer1`  | `customer-1@servicehub.example` |
-| Customer · Shanye Coffee (山野咖啡)  | Zhou Qing (周晴)      | `customer2`  | `customer-2@servicehub.example` |
-| Customer · Baizhou Coffee (白昼咖啡) | Xu Le (许乐)          | `customer3`  | `customer-3@servicehub.example` |
-| Dispatcher                           | Shen Yue (沈悦)       | `dispatcher` | `dispatcher@servicehub.example` |
-| Engineer                             | Lin Chen (林晨)       | `engineer1`  | `engineer-1@servicehub.example` |
-| Engineer                             | Gu Chuan (顾川)       | `engineer2`  | `engineer-2@servicehub.example` |
+| Role                                   | Name         | Username     | Email                           |
+| -------------------------------------- | ------------ | ------------ | ------------------------------- |
+| Customer · Harbor Coffee · London      | Alex Morgan  | `customer1`  | `customer-1@servicehub.example` |
+| Customer · Juniper Coffee · Amsterdam  | Sofia Rivera | `customer2`  | `customer-2@servicehub.example` |
+| Customer · Daylight Coffee · Singapore | Jamie Park   | `customer3`  | `customer-3@servicehub.example` |
+| Dispatcher                             | Jordan Lee   | `dispatcher` | `dispatcher@servicehub.example` |
+| Engineer                               | Taylor Chen  | `engineer1`  | `engineer-1@servicehub.example` |
+| Engineer                               | Sam Patel    | `engineer2`  | `engineer-2@servicehub.example` |
 
 Customers access their own devices and tickets; engineers handle their assigned tasks; the dispatcher assigns tickets across customers. Use separate browser profiles for the three roles to switch between them easily. Regular tabs in the same browser share a login session.
 
 ## Five-minute walkthrough
 
-1. **Report a fault:** sign in as `customer1`, select the Linea coffee machine, and submit a request titled “咖啡机无法加热” (coffee machine not heating).
-2. **Assign an engineer:** sign in as `dispatcher`, find the new ticket, and assign it to Lin Chen (林晨).
+1. **Report a fault:** sign in as `customer1`, select the Linea coffee machine, and submit a request titled “Espresso machine not heating”.
+2. **Assign an engineer:** sign in as `dispatcher`, find the new ticket, and assign it to Taylor Chen.
 3. **Complete the work:** sign in as `engineer1`, accept the task, record the resolution, and complete the service.
 4. **Confirm the service:** return to `customer1`, review the resolution, confirm completion, and rate the service.
 5. **Show portal extensions:** as the administrator, install Service insights and return to the workbench to see its entry. Uninstall it to hide the entry again.
@@ -151,40 +151,40 @@ These screenshots show the running demo with fictional accounts and sample recor
 
 ### Customers: report a fault and track progress
 
-Sign in as `customer1` and enter **Customer service desk (客户服务台)**. The top section shows device and service statistics, followed by the customer's devices and service tickets.
+Sign in as `customer1` and enter **Customer portal**. The top section shows device and service statistics, followed by the customer's devices and service tickets.
 
-![Customer service desk with device overview, repair request entry, and service tickets](docs/images/customer-portal.png)
+![Customer portal with device overview, repair request entry, and service tickets](docs/images/customer-portal.png)
 
-1. Click **Report a fault (发起报修)** in the upper-right corner and select the device.
+1. Click **Report a fault** in the upper-right corner and select the device.
 2. Enter a title, description, and urgency. For example: “Coffee machine not heating”; “The water temperature has stayed low since opening this morning, even after restarting.”
-3. Click **Submit request (提交报修)**. The ticket appears as **Awaiting assignment (待分配)**. Note its ID for the following steps.
-4. Click the ticket title or **View details (查看详情)** in the row's more menu to see the device, engineer, description, and progress.
+3. Click **Submit request**. The ticket appears as **Unassigned**. Note its ID for the following steps.
+4. Click the ticket title or **View details** in the row's more menu to see the device, engineer, description, and progress.
 
 Search by ticket ID, issue, or shop, or filter by status. Customers see only their own data; switch to `customer2` to demonstrate customer data isolation.
 
 ### Dispatchers: assign an engineer
 
-Sign in as `dispatcher` and enter **Dispatch operations (运营调度台)**. This portal brings together tickets from different customers for service coordination.
+Sign in as `dispatcher` and enter **Dispatch console**. This portal brings together tickets from different customers for service coordination.
 
-![Dispatch operations with tickets across customers and status filters](docs/images/dispatch-portal.png)
+![Dispatch console with tickets across customers and status filters](docs/images/dispatch-portal.png)
 
-1. Search for the ticket ID, or select **Awaiting assignment (待分配)**.
-2. Open its details, or choose **Assign engineer (分配工程师)** from the row's more menu.
-3. Select **Lin Chen (林晨)** in the engineer field and submit the assignment.
-4. The ticket becomes **Awaiting acceptance (待接单)** and displays Lin Chen as its engineer.
+1. Search for the ticket ID, or select **Unassigned**.
+2. Open its details, or choose **Assign engineer** from the row's more menu.
+3. Select **Taylor Chen** in the engineer field and submit the assignment.
+4. The ticket becomes **Assigned** and displays Taylor Chen as its engineer.
 
-Continue with `engineer1`. If you assign the ticket to Gu Chuan (顾川), use `engineer2` instead.
+Continue with `engineer1`. If you assign the ticket to Sam Patel, use `engineer2` instead.
 
 ### Engineers: accept a task and report the resolution
 
-Sign in as `engineer1` and enter **Engineer workspace (工程师工作台)**. Task cards show the assigned ticket, customer, address, device, and status. The same operations are available on mobile.
+Sign in as `engineer1` and enter **Engineer workspace**. Task cards show the assigned ticket, customer, address, device, and status. The same operations are available on mobile.
 
 <img src="docs/images/engineer-mobile.png" alt="Engineer mobile workspace with statistics, status filters, and task cards" width="390" />
 
-1. Find the newly assigned task under **All (全部)** and click **View task (查看任务)**.
-2. Click **Accept and start work (接单并开始处理)** in its details. The status becomes **In progress (处理中)**.
-3. After completing the work, reopen the task and enter the **Resolution (处理结果)**. For example: “Descaled the heating element, replaced the temperature sensor, and confirmed normal water temperature during a test run.”
-4. Click **Submit resolution (提交处理结果)**. The status becomes **Awaiting confirmation (待确认)**.
+1. Find the newly assigned task under **All** and click **View task**.
+2. Click **Accept and start** in its details. The status becomes **In progress**.
+3. After completing the work, reopen the task and enter the **Resolution**. For example: “Descaled the heating element, replaced the temperature sensor, and confirmed normal water temperature during a test run.”
+4. Click **Submit resolution**. The status becomes **Awaiting review**.
 
 Actions appear only for tasks assigned to the current engineer and in the appropriate state. If a task is missing, switch back to All and check which engineer the dispatcher selected.
 
@@ -192,22 +192,26 @@ Actions appear only for tasks assigned to the current engineer and in the approp
 
 Return to `customer1`'s customer portal. Refresh the page if needed to load the latest status.
 
-1. Select **Awaiting confirmation (待确认)** and find the ticket.
+1. Select **Awaiting review** and find the ticket.
 2. Open its details and read the engineer's resolution.
-3. Select a rating and submit the confirmation. You can also enter through **Confirm and rate (确认并评价)** in the row's menu.
-4. The ticket becomes **Completed (已完成)**, retaining its resolution and rating.
+3. Select a rating and submit the confirmation. You can also enter through **Confirm and rate** in the row's menu.
+4. The ticket becomes **Completed**, retaining its resolution and rating.
 
-The full sequence is **Awaiting assignment → Awaiting acceptance → In progress → Awaiting confirmation → Completed**. Available actions depend on the role and current state; preceding steps cannot be skipped.
+The full sequence is **Unassigned → Assigned → In progress → Awaiting review → Completed**. Available actions depend on the role and current state; preceding steps cannot be skipped.
 
 ### Administrators: manage portals and repeat the demo
 
 Open **System settings → Portal management** and use each row's more menu to install, open, or uninstall a portal. Install Service insights to show its new workbench entry, then uninstall it to hide the entry.
 
-Before another walkthrough, use **Restore demo data (恢复演示数据)** on the workbench. This removes tickets created during the walkthrough and recreates the sample business data. Accounts, roles, and portal installation states remain unchanged; see the next section for details.
+Before another walkthrough, use **Restore demo data** on the workbench. This removes tickets created during the walkthrough and recreates the sample business data. Accounts, roles, and portal installation states remain unchanged; see the next section for details.
+
+### Upgrade an existing Chinese demo
+
+Stop the development server, run `pnpm nocobase db sample`, and start it again. The incremental sample seed translates only unchanged original sample values. It preserves ticket progress, custom text, account credentials, roles, and portal installation states. Sign out and back in to refresh names cached in existing sessions.
 
 ## Restore demo data
 
-As the administrator, click **Restore demo data (恢复演示数据)** on the home workbench and confirm. This replaces the demo devices, tickets, and processing records with the initial dataset of 12 tickets.
+As the administrator, click **Restore demo data** on the home workbench and confirm. This replaces the demo devices, tickets, and processing records with the initial dataset of 12 tickets.
 
 - Accounts, roles, and portal installation states are preserved.
 - Restoration requires `app.sampleData` to be enabled.

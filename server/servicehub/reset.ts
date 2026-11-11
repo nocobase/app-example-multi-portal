@@ -4,12 +4,12 @@ export async function resetServiceData(
 ): Promise<void> {
   const now = new Date();
   const users = [
-    ['customer-1', '陈小满', 'customer', '星河咖啡 · 滨江店'],
-    ['customer-2', '周晴', 'customer', '山野咖啡 · 西湖店'],
-    ['customer-3', '许乐', 'customer', '白昼咖啡 · 城西店'],
-    ['dispatcher', '沈悦', 'dispatch', ''],
-    ['engineer-1', '林晨', 'engineer', ''],
-    ['engineer-2', '顾川', 'engineer', ''],
+    ['customer-1', 'Alex Morgan', 'customer', 'Harbor Coffee · London'],
+    ['customer-2', 'Sofia Rivera', 'customer', 'Juniper Coffee · Amsterdam'],
+    ['customer-3', 'Jamie Park', 'customer', 'Daylight Coffee · Singapore'],
+    ['dispatcher', 'Jordan Lee', 'dispatch', ''],
+    ['engineer-1', 'Taylor Chen', 'engineer', ''],
+    ['engineer-2', 'Sam Patel', 'engineer', ''],
   ];
 
   await query
@@ -28,31 +28,31 @@ export async function resetServiceData(
       .insertInto('serviceDevices')
       .values({
         id: 'device-' + (i + 1),
-        name: i % 2 === 0 ? 'Linea 商用咖啡机' : 'EK43 咖啡磨豆机',
+        name: i % 2 === 0 ? 'Linea espresso machine' : 'EK43 coffee grinder',
         customerId: customer[0],
         customerName: customer[3],
         serial: 'SH-2026-00' + (i + 1),
         address: [
-          '滨江区江南大道 128 号',
-          '西湖区文三路 66 号',
-          '余杭区文一西路 88 号',
+          '12 Harbor Lane, London, United Kingdom',
+          '24 Canal Walk, Amsterdam, Netherlands',
+          '8 Orchard Square, Singapore',
         ][Math.floor(i / 2)],
       })
       .execute();
   }
   const titles = [
-    '咖啡机无法加热',
-    '磨豆机出现异响',
-    '蒸汽压力不稳定',
-    '设备年度保养',
-    '出水温度偏低',
-    '磨盘精度校准',
-    '咖啡机漏水',
-    '日常清洁与检查',
-    '显示屏间歇闪烁',
-    '开机后无法出水',
-    '更换密封圈',
-    '完成季度维护',
+    'Espresso machine not heating',
+    'Unusual noise from grinder',
+    'Inconsistent steam pressure',
+    'Annual equipment service',
+    'Water temperature too low',
+    'Grinder calibration',
+    'Water leaking from espresso machine',
+    'Routine cleaning and inspection',
+    'Display flickering intermittently',
+    'No water flow after startup',
+    'Replace worn seals',
+    'Quarterly maintenance',
   ];
   const states = [
     'pending',
@@ -81,21 +81,26 @@ export async function resetServiceData(
         customerId: c[0],
         customerName: c[3],
         deviceId: 'device-' + d,
-        deviceName: d % 2 === 1 ? 'Linea 商用咖啡机' : 'EK43 咖啡磨豆机',
+        deviceName:
+          d % 2 === 1 ? 'Linea espresso machine' : 'EK43 coffee grinder',
         address: [
-          '滨江区江南大道 128 号',
-          '西湖区文三路 66 号',
-          '余杭区文一西路 88 号',
+          '12 Harbor Lane, London, United Kingdom',
+          '24 Canal Walk, Amsterdam, Netherlands',
+          '8 Orchard Square, Singapore',
         ][Math.floor((d - 1) / 2)],
         description:
-          '营业期间发现设备异常，希望尽快安排检查。门店工作时间 08:00–20:00。',
+          'Equipment needs attention during service. Please arrange an inspection. Opening hours: 08:00–20:00 local time.',
         status,
         engineerId: status === 'pending' ? null : 'engineer-' + ((i % 2) + 1),
         engineerName:
-          status === 'pending' ? null : i % 2 === 0 ? '林晨' : '顾川',
+          status === 'pending'
+            ? null
+            : i % 2 === 0
+              ? 'Taylor Chen'
+              : 'Sam Patel',
         priority: i === 0 ? 'urgent' : 'normal',
         resolution: ['resolved', 'closed'].includes(status)
-          ? '已检查设备并更换磨损部件，试运行正常。'
+          ? 'Inspected the equipment, replaced worn parts, and verified normal operation.'
           : null,
         rating: status === 'closed' ? 5 : null,
         createdAt: created,

@@ -1,8 +1,8 @@
 {
   "name": "@nocobase/app-portal-customer",
   "private": true,
-  "displayName": "客户服务台",
-  "description": "客户服务台 business portal.",
+  "displayName": "Customer portal",
+  "description": "Keep your equipment running.",
   "version": "0.0.1",
   "type": "module",
   "prettier": "@nocobase/dev-config/prettier",

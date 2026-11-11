@@ -6,11 +6,11 @@ export const portalIds = [
 ] as const;
 export type PortalId = (typeof portalIds)[number];
 export const statusLabels: Record<string, string> = {
-  pending: '待分配',
-  assigned: '待接单',
-  working: '处理中',
-  resolved: '待确认',
-  closed: '已完成',
+  pending: 'servicehub.unassigned',
+  assigned: 'servicehub.assigned',
+  working: 'servicehub.inProgressAlt',
+  resolved: 'servicehub.awaitingReview',
+  closed: 'servicehub.completedAlt',
 };
 export interface ServiceTicket {
   id: string;

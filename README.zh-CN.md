@@ -75,9 +75,11 @@ pnpm nocobase config init --dialect sqlite
 
 ```bash
 pnpm nocobase config set app.sampleData=true
-pnpm nocobase config set client.app.title=ServiceHub i18n.defaultLocale=zh-CN client.app.defaultTheme=compact
+pnpm nocobase config set client.app.title=ServiceHub i18n.defaultLocale=en-US client.app.defaultTheme=compact
 pnpm nocobase config check
 ```
+
+默认界面为英文，可通过语言菜单切换中文。两种语言共用一套英文示例数据，门店分布在伦敦、阿姆斯特丹和新加坡；人名、门店和地址均为虚构，营业时间采用门店当地时间。
 
 首次启动会自动执行数据库迁移和种子数据，创建演示角色、6 个业务账号、6 台设备及 12 张工单。演示数据对应 3 家咖啡门店，覆盖报修、派单、处理和确认等状态。
 
@@ -109,12 +111,12 @@ APP_SERVER_HOST=0.0.0.0 pnpm dev
 
 管理员登录后，进入 **系统设置 → 门户管理（Portal management）**，安装前三个业务门户。门户代码已随仓库提供，安装操作会启用对应门户。
 
-| 门户             | 演示角色       | 主要内容                               | 演示前状态 |
-| ---------------- | -------------- | -------------------------------------- | ---------- |
-| 客户服务台       | 客户           | 我的设备、发起报修、进度查询、服务确认 | 已安装     |
-| 运营调度台       | 调度员         | 工单总览、分配工程师、跟踪服务进度     | 已安装     |
-| 工程师工作台     | 工程师         | 分配给我的任务、接单、填写处理结果     | 已安装     |
-| Service insights | 管理员演示扩展 | 服务分析入口                           | 保留未安装 |
+| 门户               | 演示角色       | 主要内容                               | 演示前状态 |
+| ------------------ | -------------- | -------------------------------------- | ---------- |
+| Customer portal    | 客户           | 我的设备、发起报修、进度查询、服务确认 | 已安装     |
+| Dispatch console   | 调度员         | 工单总览、分配工程师、跟踪服务进度     | 已安装     |
+| Engineer workspace | 工程师         | 分配给我的任务、接单、填写处理结果     | 已安装     |
+| Service insights   | 管理员演示扩展 | 服务分析入口                           | 保留未安装 |
 
 回到首页工作台即可进入已安装且有权访问的门户。门户是否安装和账号是否有业务权限是两个独立条件；安装门户不会给所有用户自动授权。
 
@@ -122,21 +124,21 @@ APP_SERVER_HOST=0.0.0.0 pnpm dev
 
 以下业务账号密码统一为 **`ServiceHub2026!`**。用户名或邮箱均可用于登录。
 
-| 角色            | 姓名   | 用户名       | 邮箱                            |
-| --------------- | ------ | ------------ | ------------------------------- |
-| 客户 · 星河咖啡 | 陈小满 | `customer1`  | `customer-1@servicehub.example` |
-| 客户 · 山野咖啡 | 周晴   | `customer2`  | `customer-2@servicehub.example` |
-| 客户 · 白昼咖啡 | 许乐   | `customer3`  | `customer-3@servicehub.example` |
-| 调度员          | 沈悦   | `dispatcher` | `dispatcher@servicehub.example` |
-| 工程师          | 林晨   | `engineer1`  | `engineer-1@servicehub.example` |
-| 工程师          | 顾川   | `engineer2`  | `engineer-2@servicehub.example` |
+| 角色                               | 姓名         | 用户名       | 邮箱                            |
+| ---------------------------------- | ------------ | ------------ | ------------------------------- |
+| 客户 · Harbor Coffee · London      | Alex Morgan  | `customer1`  | `customer-1@servicehub.example` |
+| 客户 · Juniper Coffee · Amsterdam  | Sofia Rivera | `customer2`  | `customer-2@servicehub.example` |
+| 客户 · Daylight Coffee · Singapore | Jamie Park   | `customer3`  | `customer-3@servicehub.example` |
+| 调度员                             | Jordan Lee   | `dispatcher` | `dispatcher@servicehub.example` |
+| 工程师                             | Taylor Chen  | `engineer1`  | `engineer-1@servicehub.example` |
+| 工程师                             | Sam Patel    | `engineer2`  | `engineer-2@servicehub.example` |
 
 客户只访问自己的设备和工单，工程师处理分配给自己的任务，调度员负责跨客户派单。使用不同浏览器配置文件分别登录三个角色，可以方便地切换展示；同一浏览器的普通标签页共享登录会话。
 
 ## 五分钟演示流程
 
-1. **客户报修**：用 `customer1` 登录客户服务台，选择 Linea 商用咖啡机，提交一条“咖啡机无法加热”的报修。
-2. **调度派单**：用 `dispatcher` 登录运营调度台，找到新工单，将它分配给林晨。
+1. **Report a fault**：用 `customer1` 登录客户服务台，选择 Linea espresso machine，提交一条“Espresso machine not heating”的报修。
+2. **调度派单**：用 `dispatcher` 登录运营调度台，找到新工单，将它分配给Taylor Chen。
 3. **工程师处理**：用 `engineer1` 登录工程师工作台，接单、填写处理结果并完成服务。
 4. **客户确认**：回到 `customer1`，查看处理记录，确认服务并评价。
 5. **展示门户扩展**：管理员在门户管理中安装 Service insights，再回工作台查看新增入口；卸载后入口隐藏。
@@ -149,40 +151,40 @@ APP_SERVER_HOST=0.0.0.0 pnpm dev
 
 ### 客户：报修与查询进度
 
-使用 `customer1` 登录并进入 **客户服务台**。上方显示设备和服务统计，“我的设备”列出当前客户的设备，下方是该客户的服务工单。
+使用 `customer1` 登录并进入 **Customer portal**。上方显示设备和服务统计，“我的设备”列出当前客户的设备，下方是该客户的服务工单。
 
 ![客户服务台：设备概览、报修入口与服务工单](docs/images/customer-portal.png)
 
-1. 点击右上角 **发起报修**，选择报修设备。
-2. 填写问题标题和详细描述，选择紧急程度。例如标题“咖啡机无法加热”，描述“今天开店后水温一直偏低，重启后仍无法正常加热”。
-3. 点击 **提交报修**。成功后工单出现在列表，状态为 **待分配**，记下工单编号供后续演示查找。
-4. 点击工单标题，或行末更多菜单中的 **查看详情**，查看设备、工程师、问题描述和处理进度。
+1. 点击右上角 **Report a fault**，选择报修设备。
+2. 填写问题标题和详细描述，选择紧急程度。例如标题“Espresso machine not heating”，描述“今天开店后水温一直偏低，重启后仍无法正常加热”。
+3. 点击 **Submit request**。成功后工单出现在列表，状态为 **Unassigned**，记下工单编号供后续演示查找。
+4. 点击工单标题，或行末更多菜单中的 **View details**，查看设备、工程师、问题描述和处理进度。
 
 可以按工单编号、问题或门店搜索，也可切换状态筛选。客户账号只能看到自己的数据；切换到 `customer2` 可以展示不同客户间的数据隔离。
 
 ### 调度员：分配工程师
 
-使用 `dispatcher` 登录并进入 **运营调度台**。这里汇总不同客户的服务工单，适合统一查看状态和安排服务人员。
+使用 `dispatcher` 登录并进入 **Dispatch console**。这里汇总不同客户的服务工单，适合统一查看状态和安排服务人员。
 
 ![运营调度台：跨客户工单列表与状态筛选](docs/images/dispatch-portal.png)
 
-1. 搜索刚才记录的工单编号，或切换 **待分配** 筛选。
-2. 打开工单详情，也可以从行末更多菜单选择 **分配工程师**。
-3. 在详情中的工程师选择框选择 **林晨**，提交分配。
-4. 分配成功后，工单变为 **待接单**，工程师字段显示林晨。
+1. 搜索刚才记录的工单编号，或切换 **Unassigned** 筛选。
+2. 打开工单详情，也可以从行末更多菜单选择 **Assign engineer**。
+3. 在详情中的工程师选择框选择 **Taylor Chen**，提交分配。
+4. 分配成功后，工单变为 **Assigned**，工程师字段显示Taylor Chen。
 
-后续用 `engineer1` 跟进这张工单。若分配给顾川，则应使用 `engineer2` 登录。
+后续用 `engineer1` 跟进这张工单。若分配给Sam Patel，则应使用 `engineer2` 登录。
 
 ### 工程师：接单与提交结果
 
-使用 `engineer1` 登录 **工程师工作台**。任务卡片显示分配给当前工程师的工单、客户、地址、设备和状态；手机端也能完成操作。
+使用 `engineer1` 登录 **Engineer workspace**。任务卡片显示分配给当前工程师的工单、客户、地址、设备和状态；手机端也能完成操作。
 
 <img src="docs/images/engineer-mobile.png" alt="工程师移动端：任务统计、状态筛选和任务卡片" width="390" />
 
-1. 在 **全部** 中找到新分配的任务，点击 **查看任务**。
-2. 在详情中点击 **接单并开始处理**，状态变为 **处理中**。
-3. 处理完成后再次打开任务，填写 **处理结果**，例如“清理加热管水垢，更换温度传感器，试运行后水温恢复正常”。
-4. 点击 **提交处理结果**，状态变为 **待确认**，等待客户确认。
+1. 在 **All** 中找到新分配的任务，点击 **View task**。
+2. 在详情中点击 **Accept and start**，状态变为 **In progress**。
+3. 处理完成后再次打开任务，填写 **Resolution**，例如“清理加热管水垢，更换温度传感器，试运行后水温恢复正常”。
+4. 点击 **Submit resolution**，状态变为 **Awaiting review**，等待客户确认。
 
 只有分配给当前工程师且状态允许的任务，才会出现相应操作。找不到任务时，先切回“全部”，再确认调度员分配的工程师账号。
 
@@ -190,10 +192,10 @@ APP_SERVER_HOST=0.0.0.0 pnpm dev
 
 回到 `customer1` 的客户服务台，必要时刷新页面获取最新状态。
 
-1. 切换 **待确认**，找到刚才的工单。
+1. 切换 **Awaiting review**，找到刚才的工单。
 2. 打开详情，阅读工程师填写的处理结果。
-3. 选择服务评价并提交确认，也可以从行末菜单进入 **确认并评价**。
-4. 工单变为 **已完成**，详情保留处理结果和服务评价。
+3. 选择服务评价并提交确认，也可以从行末菜单进入 **Confirm and rate**。
+4. 工单变为 **Completed**，详情保留处理结果和服务评价。
 
 完整状态流程为：**待分配 → 待接单 → 处理中 → 待确认 → 已完成**。操作按钮随角色和当前状态变化，不能跳过前置步骤。
 
@@ -201,11 +203,15 @@ APP_SERVER_HOST=0.0.0.0 pnpm dev
 
 管理员进入 **系统设置 → 门户管理**，通过每行更多菜单安装、打开或卸载门户。可安装 Service insights，回到工作台展示新增入口，再卸载它展示入口隐藏。
 
-下一轮演示前，可在工作台使用 **恢复演示数据**。恢复会删除本轮新增工单并重建预置业务数据；账号、角色和门户安装状态不变，具体范围见下节。
+下一轮演示前，可在工作台使用 **Restore demo data**。恢复会删除本轮新增工单并重建预置业务数据；账号、角色和门户安装状态不变，具体范围见下节。
+
+### 升级已有中文 Demo
+
+停止开发服务，执行 `pnpm nocobase db sample` 后重新启动。增量样例任务只转换未被修改的原始示例字段，保留工单进度、自定义文案、账号凭据、角色和门户安装状态。退出后重新登录，以刷新旧会话缓存的人名。
 
 ## 恢复演示数据
 
-管理员在首页工作台点击 **恢复演示数据** 并确认，可以清除当前 Demo 的设备、工单及处理记录，恢复预置的 12 张工单，方便下一轮演示。
+管理员在首页工作台点击 **Restore demo data** 并确认，可以清除当前 Demo 的设备、工单及处理记录，恢复预置的 12 张工单，方便下一轮演示。
 
 - 账号、角色和门户安装状态会保留。
 - 仅开启 `app.sampleData` 时允许恢复。

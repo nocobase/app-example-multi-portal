@@ -35,10 +35,12 @@ for (const origin of origins) {
     waitUntil: 'domcontentloaded',
     timeout: 60000,
   });
-  await expect(page.getByRole('heading', { name: '你好，林晨' })).toBeVisible({
+  await expect(
+    page.getByRole('heading', { name: 'Hello, Taylor Chen' }),
+  ).toBeVisible({
     timeout: 45000,
   });
-  await expect(page.getByText('我的服务任务')).toBeVisible();
+  await expect(page.getByText('My service tasks')).toBeVisible();
   await page.waitForTimeout(700);
   const dimensions = await page.evaluate(() => ({
     viewport: innerWidth,
@@ -48,11 +50,14 @@ for (const origin of origins) {
     throw new Error('Horizontal overflow ' + JSON.stringify(dimensions));
   if (errors.length) throw new Error(errors.join('\n'));
   await page
-    .getByRole('button', { name: /查看任务/ })
+    .getByRole('button', { name: /View task/ })
     .first()
     .click();
   await expect(page.getByRole('dialog')).toBeVisible();
-  await page.getByRole('button', { name: '关闭', exact: true }).first().click();
+  await page
+    .getByRole('button', { name: 'Close', exact: true })
+    .first()
+    .click();
   await page.screenshot({
     path:
       origin === origins[0]
@@ -73,11 +78,17 @@ await context.request.post(base + '/main/api/auth/sign-in/email', {
 });
 const page = await context.newPage();
 await page.goto(base + '/main/');
-await expect(page.getByRole('heading', { name: '客户服务台' })).toBeVisible();
-await expect(page.getByRole('link', { name: /服务洞察/ })).toHaveCount(0);
-await page.getByRole('button', { name: '恢复演示数据', exact: true }).click();
+await expect(
+  page.getByRole('heading', { name: 'Customer portal' }),
+).toBeVisible();
+await expect(page.getByRole('link', { name: /Service insights/ })).toHaveCount(
+  0,
+);
+await page
+  .getByRole('button', { name: 'Restore demo data', exact: true })
+  .click();
 await expect(page.getByRole('dialog')).toBeVisible();
-await page.getByRole('button', { name: '确认恢复', exact: true }).click();
+await page.getByRole('button', { name: 'Restore data', exact: true }).click();
 await expect(page.getByRole('dialog')).toHaveCount(0);
 await page.screenshot({
   path: '/tmp/servicehub-workbench.png',

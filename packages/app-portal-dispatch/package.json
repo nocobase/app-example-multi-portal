@@ -1,8 +1,8 @@
 {
   "name": "@nocobase/app-portal-dispatch",
   "private": true,
-  "displayName": "运营调度台",
-  "description": "运营调度台 business portal.",
+  "displayName": "Dispatch console",
+  "description": "Keep every service request moving.",
   "version": "0.0.1",
   "type": "module",
   "prettier": "@nocobase/dev-config/prettier",

@@ -1,8 +1,8 @@
 {
   "name": "@nocobase/app-portal-insights",
   "private": true,
-  "displayName": "服务洞察",
-  "description": "服务洞察 business portal.",
+  "displayName": "Service insights",
+  "description": "See how your service team is performing.",
   "version": "0.0.1",
   "type": "module",
   "prettier": "@nocobase/dev-config/prettier",

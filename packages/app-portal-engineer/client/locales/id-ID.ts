@@ -1,6 +1,6 @@
 import type { PortalResource } from './en-US.js';
 const messages: PortalResource = {
-  title: '工程师工作台',
+  title: 'Engineer workspace',
   description: 'Ruang kerja modul Anda.',
 };
 export default messages;

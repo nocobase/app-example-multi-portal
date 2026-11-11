@@ -1,6 +1,6 @@
 import type { PortalResource } from './en-US.js';
 const messages: PortalResource = {
-  title: '服务洞察',
+  title: 'Service insights',
   description: 'Không gian làm việc của mô-đun.',
 };
 export default messages;

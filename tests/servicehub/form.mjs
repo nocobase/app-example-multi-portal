@@ -15,19 +15,19 @@ await context.request.post(base + '/main/api/auth/sign-in/email', {
 });
 const page = await context.newPage();
 await page.goto(base + '/main/portals/customer');
-await page.getByRole('button', { name: '发起报修', exact: true }).click();
-await page.getByLabel('问题标题').fill('手机页面提交验收');
+await page.getByRole('button', { name: 'Report a fault', exact: true }).click();
+await page.getByLabel('Issue title').fill('Mobile repair request');
 await page
-  .getByLabel('详细描述')
-  .fill('从手机报修表单提交并验证服务记录持久保存。');
-await page.getByRole('button', { name: '提交报修', exact: true }).click();
+  .getByLabel('Description')
+  .fill('Submit a repair from mobile and verify that it persists.');
+await page.getByRole('button', { name: 'Submit request', exact: true }).click();
 await expect(page.getByRole('dialog')).toHaveCount(0);
 await expect(
-  page.getByRole('button', { name: '手机页面提交验收', exact: true }),
+  page.getByRole('button', { name: 'Mobile repair request', exact: true }),
 ).toBeVisible();
 await page.reload();
 await expect(
-  page.getByRole('button', { name: '手机页面提交验收', exact: true }),
+  page.getByRole('button', { name: 'Mobile repair request', exact: true }),
 ).toBeVisible();
 console.log('PASS mobile report form and persistence');
 await browser.close();

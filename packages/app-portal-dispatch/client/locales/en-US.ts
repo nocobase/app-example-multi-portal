@@ -1,2 +1,2 @@
-export default { title: "运营调度台", description: "每一次服务，都有序推进" };
+export default { title: "Dispatch console", description: "Keep every service request moving." };
 export type PortalResource = {title:string;description:string};

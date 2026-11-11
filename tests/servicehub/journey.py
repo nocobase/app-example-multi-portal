@@ -15,9 +15,9 @@ for s,p in [(customer,'customer'),(dispatch,'dispatch'),(engineer,'engineer')]:
  data=body(s.get(BASE+'/serviceHub/'+p));print(p,len(data['tickets']),len(data['devices']))
 assert customer.get(BASE+'/serviceHub/dispatch').status_code==403
 assert requests.get(BASE+'/serviceHub/customer').status_code==401
-created=body(customer.post(BASE+'/serviceHub/customer/tickets',headers={'Idempotency-Key':str(int(time.time()*1000))+'.'+str(uuid.uuid4())},json={'deviceId':'device-1','title':'演示：咖啡机无法加热','description':'营业期间无法正常加热，请安排工程师检查。','priority':'urgent'}));print('created',str(created)[:300])
+created=body(customer.post(BASE+'/serviceHub/customer/tickets',headers={'Idempotency-Key':str(int(time.time()*1000))+'.'+str(uuid.uuid4())},json={'deviceId':'device-1','title':'Demo: Espresso machine not heating','description':'The machine is not heating. Please arrange an inspection.','priority':'urgent'}));print('created',str(created)[:300])
 ticket=created['record']
-for s,p,action,extra in [(dispatch,'dispatch','assign',{'engineerId':'engineer-1'}),(engineer,'engineer','accept',{}),(engineer,'engineer','complete',{'resolution':'已更换温控模块，试运行正常。'}),(customer,'customer','confirm',{'rating':5})]:
+for s,p,action,extra in [(dispatch,'dispatch','assign',{'engineerId':'engineer-1'}),(engineer,'engineer','accept',{}),(engineer,'engineer','complete',{'resolution':'Replaced the thermostat and verified normal operation.'}),(customer,'customer','confirm',{'rating':5})]:
  payload={'transition':action,'requestId':str(uuid.uuid4()),'version':ticket['lifecycleVersion'],**extra}
  ticket=body(s.post(BASE+'/serviceHub/'+p+'/tickets/'+ticket['id']+'/fire',json=payload));print(action,ticket['status'],ticket['lifecycleVersion'])
  assert s.post(BASE+'/serviceHub/'+p+'/tickets/'+ticket['id']+'/fire',json=payload).status_code==200
@@ -26,7 +26,7 @@ assert all(t['customerId']=='customer-2' for t in body(other.get(BASE+'/serviceH
 assert other.post(BASE+'/serviceHub/customer/tickets/'+ticket['id']+'/fire',json={'transition':'confirm','requestId':str(uuid.uuid4()),'version':ticket['lifecycleVersion'],'rating':1}).status_code==403
 print('PASS: complete journey, retry replay, anonymous/role/customer isolation')
 key=str(int(time.time()*1000))+'.'+str(uuid.uuid4())
-report={'deviceId':'device-1','title':'幂等性验收工单','description':'同一提交重试时只能生成一张工单。','priority':'normal'}
+report={'deviceId':'device-1','title':'Submission replay check','description':'Retrying the same submission should create just one ticket.','priority':'normal'}
 a=body(customer.post(BASE+'/serviceHub/customer/tickets',headers={'Idempotency-Key':key},json=report))
 b=body(customer.post(BASE+'/serviceHub/customer/tickets',headers={'Idempotency-Key':key},json=report))
 assert a['record']['id']==b['record']['id']

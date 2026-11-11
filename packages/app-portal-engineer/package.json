@@ -1,8 +1,8 @@
 {
   "name": "@nocobase/app-portal-engineer",
   "private": true,
-  "displayName": "工程师工作台",
-  "description": "工程师工作台 business portal.",
+  "displayName": "Engineer workspace",
+  "description": "Your tasks. Your next move.",
   "version": "0.0.1",
   "type": "module",
   "prettier": "@nocobase/dev-config/prettier",

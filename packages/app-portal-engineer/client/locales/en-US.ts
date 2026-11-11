@@ -1,2 +1,2 @@
-export default { title: "工程师工作台", description: "今天的任务，尽在掌握" };
+export default { title: "Engineer workspace", description: "Your tasks. Your next move." };
 export type PortalResource = {title:string;description:string};

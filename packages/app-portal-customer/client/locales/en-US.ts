@@ -1,2 +1,2 @@
-export default { title: "客户服务台", description: "设备保障，服务随行" };
+export default { title: "Customer portal", description: "Keep your equipment running." };
 export type PortalResource = {title:string;description:string};

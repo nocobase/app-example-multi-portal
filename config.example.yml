@@ -6,8 +6,8 @@
 
 # The language the application starts in, for the browser and the server alike. Which languages it offers follows
 # from the files in client/locales and server/locales, not from configuration.
-# i18n:
-#   defaultLocale: zh-CN
+i18n:
+  defaultLocale: en-US
 
 # Limits every /api request meets before its route, each off until set. bodyLimit refuses a larger body with 413
 # BODY_TOO_LARGE; a route may set its own, usually smaller, limit. timeout answers 503 REQUEST_TIMEOUT when a handler
@@ -51,10 +51,10 @@
 # Values under client are public and embedded in the SPA HTML.
 client:
   app:
-    title: NocoBase
+    title: ServiceHub
     # Defaults apply only when no valid browser-local choice is saved.
     # defaultColorScheme: system # light | dark | system
-    # defaultTheme: compact # ID from client/theme/theme-presets.ts
+    defaultTheme: compact # ID from client/theme/theme-presets.ts
 
 users:
   # The first administrator, created only when seeding an empty user table. Changing these values later does not
