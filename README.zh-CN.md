@@ -4,7 +4,14 @@
 
 基于 NocoBase 3 的多门户示例应用，展示共享业务数据、角色权限和跨门户协作。ServiceHub 以设备服务为业务场景，让客户、调度员和工程师通过各自的门户，围绕同一张工单完成协作。
 
-![ServiceHub 工作台：客户、调度与工程师的专属门户](docs/images/admin-workbench.png)
+![同一账号在 ServiceHub 的不同门户之间切换](docs/images/portal-switching.png)
+
+- **一个账号，多个工作台**：无需退出登录，即可在调度和现场服务之间切换。
+- **不同门户，独立布局**：客户顶部导航、调度侧边栏、工程师移动端底部导航。
+- **共享完整服务流程**：围绕同一张工单报修、派单、处理和确认，各角色的数据范围与操作权限不同。
+- **门户独立安装**：按需启用 Service insights，只有获得授权的用户才会看到入口。
+
+[安装](#安装) · [演示账号](#演示账号) · [门户切换](#先展示多门户特色) · [演示流程](#五分钟演示流程) · [实际截图](#使用说明与截图)
 
 ## 安装
 
@@ -113,12 +120,12 @@ APP_SERVER_HOST=0.0.0.0 pnpm dev
 
 管理员登录后，进入 **系统设置 → 门户管理（Portal management）**，安装前三个业务门户。门户代码已随仓库提供，安装操作会启用对应门户。
 
-| 门户               | 演示角色       | 主要内容                               | 演示前状态 |
-| ------------------ | -------------- | -------------------------------------- | ---------- |
-| Customer portal    | 客户           | 我的设备、发起报修、进度查询、服务确认 | 已安装     |
-| Dispatch console   | 调度员         | 工单总览、分配工程师、跟踪服务进度     | 已安装     |
-| Engineer workspace | 工程师         | 分配给我的任务、接单、填写处理结果     | 已安装     |
-| Service insights   | 管理员演示扩展 | 实时状态分布与门店服务进度             | 保留未安装 |
+| 门户               | 演示角色             | 主要内容                               | 演示前状态 |
+| ------------------ | -------------------- | -------------------------------------- | ---------- |
+| Customer portal    | 客户                 | 我的设备、发起报修、进度查询、服务确认 | 已安装     |
+| Dispatch console   | 调度员               | 工单总览、分配工程师、跟踪服务进度     | 已安装     |
+| Engineer workspace | 工程师               | 分配给我的任务、接单、填写处理结果     | 已安装     |
+| Service insights   | 经理使用，管理员安装 | 实时状态分布与门店服务进度             | 保留未安装 |
 
 回到首页工作台即可进入已安装且有权访问的门户。门户是否安装和账号是否有业务权限是两个独立条件；安装门户不会给所有用户自动授权。
 
@@ -136,7 +143,7 @@ APP_SERVER_HOST=0.0.0.0 pnpm dev
 | 工程师                             | Sam Patel     | `engineer2`  | `engineer-2@servicehub.example` |
 | 服务经理                           | Morgan Brooks | `manager`    | `manager@servicehub.example`    |
 
-客户只访问自己的设备和工单，工程师处理分配给自己的任务，调度员负责跨客户派单。使用不同浏览器配置文件分别登录三个角色，可以方便地切换展示；同一浏览器的普通标签页共享登录会话。
+客户只访问自己的设备和工单，工程师处理分配给自己的任务，调度员负责跨客户派单。用 `manager` 展示同一会话内的门户切换。展示不同人员之间的协作时，使用不同浏览器配置文件分别登录；同一浏览器的普通标签页共享登录会话。
 
 ## 先展示多门户特色
 
@@ -146,8 +153,6 @@ APP_SERVER_HOST=0.0.0.0 pnpm dev
 2. 点击 **Switch portal → Engineer workspace**。无需退出登录，同一账号立即进入自己的现场任务，页面从侧边栏切换为适合手机使用的任务卡片与底部导航。
 3. 从底部 **Completed work** 查看已完成任务；经理初始没有已完成任务，客户确认服务后会出现在这里。再通过 **Switch portal** 返回调度门户，查看全部客户工单与团队分工。
 4. 用 `customer1` 登录，展示客户门户的顶部导航：**Overview**、**My devices**、**Service tickets**。设备页可直接针对某台设备发起报修。
-
-![同一经理账号通过 Switch portal 切换业务门户](docs/images/portal-switching.png)
 
 | 门户               | 独立布局                   | 可浏览的真实页面             |
 | ------------------ | -------------------------- | ---------------------------- |
@@ -160,13 +165,17 @@ APP_SERVER_HOST=0.0.0.0 pnpm dev
 
 ## 五分钟演示流程
 
-1. **Report a fault**：用 `customer1` 登录客户服务台，选择 Linea espresso machine，提交一条“Espresso machine not heating”的报修。
-2. **调度派单**：用 `dispatcher` 登录运营调度台，找到新工单，将它分配给Taylor Chen。
-3. **工程师处理**：用 `engineer1` 登录工程师工作台，接单、填写处理结果并完成服务。
-4. **客户确认**：回到 `customer1`，查看处理记录，确认服务并评价。
-5. **展示门户扩展**：管理员在门户管理中安装 Service insights，再回工作台查看新增入口；卸载后入口隐藏。
+准备两个浏览器配置文件，分别登录 `customer1` 和 `manager`。开始前先安装前三个业务门户。
 
-重点展示同一业务在不同角色下的视角、数据范围和可执行操作，以及门户可以独立启用的能力。手机端也可完成工单操作。客户与调度门户使用响应式表格，行操作集中在更多菜单中；工程师门户使用任务卡片。
+1. **客户报修**：用 `customer1` 打开 **My devices**，为 Linea espresso machine 发起报修。标题使用“Espresso machine not heating”，记下新工单编号。
+2. **经理派单**：用 `manager` 打开 **Dispatch console → Ticket queue**，找到该编号，分配给 **Morgan Brooks**。进入 **Field team**，可以看到经理名下新增的任务。
+3. **切换并处理**：无需退出登录，点击 **Switch portal → Engineer workspace**，打开同一张工单。点击 **Accept and start**，填写处理结果，再点击 **Submit resolution**。
+4. **客户确认**：回到客户的浏览器配置文件，进入 **Service tickets → Awaiting review**，确认服务并评价。在经理的工程师门户刷新页面，进入 **Completed work** 查看这张已完成工单。
+5. **展示门户扩展**：在单独的浏览器配置文件中以管理员登录，安装 **Service insights**。刷新经理页面，从 **Switch portal** 进入服务分析，查看实时汇总；演示后卸载它，恢复最初的三个门户配置。
+
+这条流程同时展示一张工单在不同人员之间的协作，以及同一个人在两种工作台之间的切换。如需分开演示调度员和工程师，可改用 `dispatcher` 将工单分配给 **Taylor Chen**，再用 `engineer1` 处理。
+
+客户与调度门户使用响应式表格，操作集中在纯文字的更多菜单中；工程师门户使用任务卡片和底部导航。切换门户保持当前登录身份，服务端独立校验各门户的权限与数据范围。
 
 ## 使用说明与截图
 
@@ -174,11 +183,11 @@ APP_SERVER_HOST=0.0.0.0 pnpm dev
 
 ### 客户：报修与查询进度
 
-使用 `customer1` 登录并进入 **Customer portal**。上方显示设备和服务统计，“我的设备”列出当前客户的设备，下方是该客户的服务工单。
+使用 `customer1` 登录并进入 **Customer portal**。顶部导航区分 **Overview**、**My devices** 和 **Service tickets**。概览展示欢迎区、统计和设备摘要；设备页面为每台设备提供直接报修入口。
 
 ![客户服务台：设备概览、报修入口与服务工单](docs/images/customer-portal.png)
 
-1. 点击右上角 **Report a fault**，选择报修设备。
+1. 点击页面标题区的 **Report a fault** 并选择设备，或从 **My devices** 中直接点击某台设备的报修按钮，自动选中该设备。
 2. 填写问题标题和详细描述，选择紧急程度。例如标题“Espresso machine not heating”，描述“今天开店后水温一直偏低，重启后仍无法正常加热”。
 3. 点击 **Submit request**。成功后工单出现在列表，状态为 **Unassigned**，记下工单编号供后续演示查找。
 4. 点击工单标题，或行末更多菜单中的 **View details**，查看设备、工程师、问题描述和处理进度。
@@ -187,7 +196,7 @@ APP_SERVER_HOST=0.0.0.0 pnpm dev
 
 ### 调度员：分配工程师
 
-使用 `dispatcher` 登录并进入 **Dispatch console**。这里汇总不同客户的服务工单，适合统一查看状态和安排服务人员。
+使用 `dispatcher` 或 `manager` 登录并进入 **Dispatch console**。这里汇总不同客户的服务工单，适合统一查看状态和安排服务人员。下方截图使用经理账号。
 
 ![运营调度台：跨客户工单列表与状态筛选](docs/images/dispatch-portal.png)
 
@@ -195,12 +204,12 @@ APP_SERVER_HOST=0.0.0.0 pnpm dev
 
 ![现场团队：三位服务人员的真实派单情况](docs/images/dispatch-team.png)
 
-1. 搜索刚才记录的工单编号，或切换 **Unassigned** 筛选。
+1. 先进入 **Ticket queue**，再搜索刚才记录的工单编号，或切换 **Unassigned** 筛选。
 2. 打开工单详情，也可以从行末更多菜单选择 **Assign engineer**。
 3. 在详情中的工程师选择框选择 **Taylor Chen**，提交分配。
-4. 分配成功后，工单变为 **Assigned**，工程师字段显示Taylor Chen。
+4. 分配成功后，工单变为 **Assigned**，工程师字段显示 Taylor Chen。
 
-后续用 `engineer1` 跟进这张工单。若分配给Sam Patel，则应使用 `engineer2` 登录。
+后续用 `engineer1` 跟进这张工单。若分配给 Sam Patel，则应使用 `engineer2` 登录。
 
 ### 工程师：接单与提交结果
 

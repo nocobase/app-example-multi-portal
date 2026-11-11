@@ -4,7 +4,14 @@ English | [简体中文](README.zh-CN.md)
 
 A NocoBase 3 example application demonstrating multiple portals, shared business data, role-based permissions, and cross-portal collaboration. ServiceHub brings these capabilities together in an equipment service scenario: customers, dispatchers, and engineers work on the same ticket through dedicated portals.
 
-![ServiceHub workbench with dedicated customer, dispatch, and engineer portals](docs/images/admin-workbench.png)
+![Switch between ServiceHub portals with the same account](docs/images/portal-switching.png)
+
+- **One account, multiple workspaces:** switch between dispatch and field service without signing out.
+- **A layout for each job:** customer top navigation, a dispatch sidebar, and an engineer workspace with mobile bottom navigation.
+- **One shared service process:** report, assign, resolve, and confirm the same ticket with role-scoped data and actions.
+- **Independent portal installation:** enable Service insights when needed; only authorized users see its entry.
+
+[Installation](#installation) · [Demo accounts](#demo-accounts) · [Portal switching](#show-the-multi-portal-experience-first) · [Walkthrough](#five-minute-walkthrough) · [Screenshots](#usage-guide-and-screenshots)
 
 ## Installation
 
@@ -113,12 +120,12 @@ Use the machine's actual LAN IP and the application port from the ready message.
 
 Sign in as the administrator, open **System settings → Portal management**, and install the first three business portals. Their code is included in the repository; installation enables each portal.
 
-| Portal             | Demo role                              | Main features                                            | State to prepare  |
-| ------------------ | -------------------------------------- | -------------------------------------------------------- | ----------------- |
-| Customer portal    | Customer                               | Devices, repair requests, progress, service confirmation | Installed         |
-| Dispatch console   | Dispatcher                             | Ticket overview, engineer assignment, service tracking   | Installed         |
-| Engineer workspace | Engineer                               | Assigned tasks, acceptance, resolution reporting         | Installed         |
-| Service insights   | Administrator demonstrating extensions | Live status and location summaries                       | Leave uninstalled |
+| Portal             | Demo role                          | Main features                                            | State to prepare  |
+| ------------------ | ---------------------------------- | -------------------------------------------------------- | ----------------- |
+| Customer portal    | Customer                           | Devices, repair requests, progress, service confirmation | Installed         |
+| Dispatch console   | Dispatcher                         | Ticket overview, engineer assignment, service tracking   | Installed         |
+| Engineer workspace | Engineer                           | Assigned tasks, acceptance, resolution reporting         | Installed         |
+| Service insights   | Manager; administrator installs it | Live status and location summaries                       | Leave uninstalled |
 
 Return to the home workbench to enter installed portals that your account can access. Installation and business permissions are separate requirements; installing a portal does not automatically grant access to every user.
 
@@ -136,7 +143,7 @@ All business accounts below use **`ServiceHub2026!`** as their password. Sign in
 | Engineer                               | Sam Patel     | `engineer2`  | `engineer-2@servicehub.example` |
 | Service manager                        | Morgan Brooks | `manager`    | `manager@servicehub.example`    |
 
-Customers access their own devices and tickets; engineers handle their assigned tasks; the dispatcher assigns tickets across customers. Use separate browser profiles for the three roles to switch between them easily. Regular tabs in the same browser share a login session.
+Customers access their own devices and tickets; engineers handle their assigned tasks; the dispatcher assigns tickets across customers. Use `manager` to demonstrate switching portals within one session. For collaboration between different people, use separate browser profiles; regular tabs in the same browser share a login session.
 
 ## Show the multi-portal experience first
 
@@ -146,8 +153,6 @@ Start with **`manager` / `ServiceHub2026!`**. Morgan Brooks coordinates the team
 2. Choose **Switch portal → Engineer workspace**. Without signing out, the same account enters its own field tasks. The sidebar gives way to task cards and mobile bottom navigation.
 3. Open **Completed work** from the bottom navigation to view finished tasks; it starts empty for the manager and fills as customers confirm completed work. Switch back to the dispatch portal to see all customers and team assignments again.
 4. Sign in as `customer1` to show the customer portal's top navigation: **Overview**, **My devices**, and **Service tickets**. Report a fault directly from a device on the devices page.
-
-![The manager switching between authorized portals without signing out](docs/images/portal-switching.png)
 
 | Portal             | Independent layout                             | Working pages                                     |
 | ------------------ | ---------------------------------------------- | ------------------------------------------------- |
@@ -160,13 +165,17 @@ The switcher lists only portals that are **installed and authorized for the curr
 
 ## Five-minute walkthrough
 
-1. **Report a fault:** sign in as `customer1`, select the Linea coffee machine, and submit a request titled “Espresso machine not heating”.
-2. **Assign an engineer:** sign in as `dispatcher`, find the new ticket, and assign it to Taylor Chen.
-3. **Complete the work:** sign in as `engineer1`, accept the task, record the resolution, and complete the service.
-4. **Confirm the service:** return to `customer1`, review the resolution, confirm completion, and rate the service.
-5. **Show portal extensions:** as the administrator, install Service insights and return to the workbench to see its entry. Uninstall it to hide the entry again.
+Use two browser profiles: one for `customer1`, the other for `manager`. Install the first three portals before starting.
 
-Highlight each role's view of the same process, its data scope, its available actions, and the ability to enable portals independently. Ticket operations also work on mobile. Customer and dispatcher portals use responsive tables with row actions in a more menu; the engineer portal uses task cards.
+1. **Report:** as `customer1`, open **My devices** and report a fault on the Linea espresso machine. Use “Espresso machine not heating” as the title and note the new ticket ID.
+2. **Dispatch:** as `manager`, open **Dispatch console → Ticket queue**, find that ID, and assign it to **Morgan Brooks**. Open **Field team** to see the assignment under the manager.
+3. **Switch and resolve:** choose **Switch portal → Engineer workspace** without signing out. Open the same ticket, select **Accept and start**, enter a resolution, and select **Submit resolution**.
+4. **Confirm:** return to the customer's browser profile, open **Service tickets → Awaiting review**, and confirm and rate the service. In the manager's engineer portal, refresh and open **Completed work** to see the finished ticket.
+5. **Show an extension:** sign in as the administrator in a separate profile and install **Service insights**. Refresh the manager's page and open it through **Switch portal** to inspect live service summaries. Uninstall it afterward to restore the initial three-portal setup.
+
+This sequence demonstrates one ticket moving between people, and one person switching between two distinct workspaces. For a separate dispatcher/engineer presentation, use `dispatcher` to assign the ticket to **Taylor Chen**, then `engineer1` to handle it.
+
+Customer and dispatch portals use responsive tables with actions collected in a text-only more menu. The engineer portal uses task cards and bottom navigation. Portal switching preserves the signed-in identity; the server enforces each portal's permissions and data scope.
 
 ## Usage guide and screenshots
 
@@ -174,11 +183,11 @@ These screenshots show the running demo with fictional accounts and sample recor
 
 ### Customers: report a fault and track progress
 
-Sign in as `customer1` and enter **Customer portal**. The top section shows device and service statistics, followed by the customer's devices and service tickets.
+Sign in as `customer1` and enter **Customer portal**. The top navigation separates **Overview**, **My devices**, and **Service tickets**. Overview includes a welcome area, statistics, and device summaries; the devices page includes a fault-report shortcut for each device.
 
 ![Customer portal with device overview, repair request entry, and service tickets](docs/images/customer-portal.png)
 
-1. Click **Report a fault** in the upper-right corner and select the device.
+1. Click **Report a fault** in the page header and select the device, or use the action on **My devices** to preselect that device.
 2. Enter a title, description, and urgency. For example: “Coffee machine not heating”; “The water temperature has stayed low since opening this morning, even after restarting.”
 3. Click **Submit request**. The ticket appears as **Unassigned**. Note its ID for the following steps.
 4. Click the ticket title or **View details** in the row's more menu to see the device, engineer, description, and progress.
@@ -187,7 +196,7 @@ Search by ticket ID, issue, or shop, or filter by status. Customers see only the
 
 ### Dispatchers: assign an engineer
 
-Sign in as `dispatcher` and enter **Dispatch console**. This portal brings together tickets from different customers for service coordination.
+Sign in as `dispatcher` or `manager` and enter **Dispatch console**. This portal brings together tickets from different customers for service coordination. The screenshots use the manager account.
 
 ![Dispatch console with tickets across customers and status filters](docs/images/dispatch-portal.png)
 
@@ -195,7 +204,7 @@ Use **Field team** to inspect workload and open an assigned ticket directly. **S
 
 ![Field team with real assignments across three service staff](docs/images/dispatch-team.png)
 
-1. Search for the ticket ID, or select **Unassigned**.
+1. Open **Ticket queue**, then search for the ticket ID or select **Unassigned**.
 2. Open its details, or choose **Assign engineer** from the row's more menu.
 3. Select **Taylor Chen** in the engineer field and submit the assignment.
 4. The ticket becomes **Assigned** and displays Taylor Chen as its engineer.
