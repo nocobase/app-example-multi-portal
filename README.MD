@@ -12,7 +12,7 @@ A multi-portal equipment service demo built with NocoBase 3. Customers, dispatch
 
 - Node.js **24 or later**.
 - pnpm **11.7.0**.
-- Git and access to the `nocobase/ServiceHub` repository.
+- Git and access to the `nocobase/app-demo-service-hub` repository.
 - Read access to the NocoBase private package registry. This application uses the commercial multi-portal plugin.
 
 The default database is SQLite; no separate database service is required.
@@ -26,8 +26,8 @@ pnpm --version
 ### 2. Clone the repository
 
 ```bash
-git clone https://github.com/nocobase/ServiceHub.git
-cd ServiceHub
+git clone https://github.com/nocobase/app-demo-service-hub.git
+cd app-demo-service-hub
 ```
 
 Install this repository directly. You do not need to generate another application with `create-app`.

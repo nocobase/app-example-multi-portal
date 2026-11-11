@@ -12,7 +12,7 @@
 
 - Node.js **24 或更高版本**。
 - pnpm **11.7.0**。
-- Git，以及 `nocobase/ServiceHub` 仓库的访问权限。
+- Git，以及 `nocobase/app-demo-service-hub` 仓库的访问权限。
 - NocoBase 私有包源的读取权限：本项目使用商业多门户插件。
 
 默认使用 SQLite，无需单独安装数据库服务。
@@ -26,8 +26,8 @@ pnpm --version
 ### 2. 克隆仓库
 
 ```bash
-git clone https://github.com/nocobase/ServiceHub.git
-cd ServiceHub
+git clone https://github.com/nocobase/app-demo-service-hub.git
+cd app-demo-service-hub
 ```
 
 直接安装这个仓库即可，不需要再通过 `create-app` 创建应用。
