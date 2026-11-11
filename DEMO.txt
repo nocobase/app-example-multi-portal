@@ -4,11 +4,8 @@ See README.MD (English) or README.zh-CN.md (Chinese) for installation,
 accounts, the walkthrough, and screenshots.
 
 English is the default interface language. Both languages share one fictional
-English dataset spanning London, Amsterdam, and Singapore. Display names change;
-account IDs, usernames, passwords, roles, and permissions remain unchanged.
-
-Existing sample installations run pnpm nocobase db sample to apply the incremental English-data seed.
-It updates only original sample values and preserves custom text and ticket state.
+English dataset spanning London, Amsterdam, and Singapore.
+Enable app.sampleData before the first startup to create the demo accounts and records.
 Restore demo data recreates the English business records without changing accounts.
 
 Host maintenance:

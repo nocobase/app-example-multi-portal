@@ -205,10 +205,6 @@ Open **System settings → Portal management** and use each row's more menu to i
 
 Before another walkthrough, use **Restore demo data** on the workbench. This removes tickets created during the walkthrough and recreates the sample business data. Accounts, roles, and portal installation states remain unchanged; see the next section for details.
 
-### Upgrade an existing Chinese demo
-
-Stop the development server, run `pnpm nocobase db sample`, and start it again. The incremental sample seed translates only unchanged original sample values. It preserves ticket progress, custom text, account credentials, roles, and portal installation states. Sign out and back in to refresh names cached in existing sessions.
-
 ## Restore demo data
 
 As the administrator, click **Restore demo data** on the home workbench and confirm. This replaces the demo devices, tickets, and processing records with the initial dataset of 12 tickets.
