@@ -1,0 +1,51 @@
+ServiceHub — multi-portal equipment service demo
+
+Repository: https://github.com/nocobase/ServiceHub
+
+This is an isolated demo application. Enable app.sampleData before the first
+initialization to create the synthetic accounts and records below. Run config
+init/check through pnpm nocobase. Never reuse demo passwords in production.
+The first three portals are installed through System settings -> Portal management;
+leave Service insights uninstalled for the installation demonstration.
+
+Development: pnpm dev (set APP_SERVER_HOST=0.0.0.0 for LAN access).
+Browser/API tests accept SERVICEHUB_URL; acceptance.mjs optionally also checks
+SERVICEHUB_PUBLIC_URL. PLAYWRIGHT_CHROMIUM_EXECUTABLE selects a local browser.
+A temporary tunnel must be configured for the actual application port, with its
+origin in auth.trustedOrigins. APP_ALLOWED_HOSTS is a comma-separated Vite host
+list; APP_SOURCE_ROOTS optionally allows linked source dependencies in development.
+The public URL lasts only while the tunnel is running.
+
+Demo accounts (synthetic, isolated data):
+Customer: customer1 / customer-1@servicehub.example
+Dispatcher: dispatcher / dispatcher@servicehub.example
+Engineer: engineer1 / engineer-1@servicehub.example
+All three use password ServiceHub2026!
+Administrator: admin / admin@nocobase.com, password admin123
+Additional isolated customers: customer2, customer3. Second engineer: engineer2.
+
+Five-minute demo:
+1. Customer submits a fault for the Linea coffee machine.
+2. Dispatcher finds the new ticket and assigns Lin Chen (林晨).
+3. Engineer accepts, records a resolution, and completes the service.
+4. Customer confirms and rates the result.
+5. Administrator opens Portal management and installs Service insights.
+6. Return to the workbench to see the new portal. Uninstall it to hide it.
+7. Workbench -> Restore demo data resets only the synthetic devices,
+   tickets and their lifecycle logs; accounts and portal installations remain.
+
+This preview serves the compiled client with the source server and locally linked
+NocoBase dependencies. Client/server typechecks and client compilation are verified.
+A portable production bundle is not complete: the final dependency installation
+currently requests the unpublished commercial multi-portal package from npmjs
+and receives 404. Configure authorized compatible commercial packages before
+building a standalone deployment. No changes were made to PM-1359's source.
+
+Services:
+  systemctl --user status servicehub-server servicehub-client servicehub-tunnel
+Restart server:
+  systemctl --user stop servicehub-server
+  bash scripts/start-demo.sh
+Rebuild client after changes: pnpm exec vite build
+Business acceptance: python3 tests/servicehub/journey.py
+Browser acceptance requires Playwright Chromium and its OS shared libraries.

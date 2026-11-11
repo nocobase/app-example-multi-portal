@@ -1,0 +1,138 @@
+{
+  "name": "@nocobase/app-portal-engineer",
+  "private": true,
+  "displayName": "工程师工作台",
+  "description": "工程师工作台 business portal.",
+  "version": "0.0.1",
+  "type": "module",
+  "prettier": "@nocobase/dev-config/prettier",
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "sideEffects": false,
+  "exports": {
+    "./server": {
+      "types": "./server/index.ts",
+      "import": "./server/index.ts"
+    },
+    "./server/tokens": {
+      "types": "./server/tokens.ts",
+      "import": "./server/tokens.ts"
+    },
+    "./client": {
+      "types": "./client/index.ts",
+      "import": "./client/index.ts"
+    },
+    "./client/plugin": {
+      "types": "./client/plugin.ts",
+      "import": "./client/plugin.ts"
+    },
+    "./client/routes": {
+      "types": "./client/routes.ts",
+      "import": "./client/routes.ts"
+    },
+    "./package.json": "./package.json",
+    "./portal": {
+      "types": "./portal.ts",
+      "import": "./portal.ts"
+    }
+  },
+  "imports": {
+    "#components/*": {
+      "development": "./client/components/*.js",
+      "default": "./dist/client/components/*.js"
+    },
+    "#hooks/*": {
+      "development": "./client/hooks/*.js",
+      "default": "./dist/client/hooks/*.js"
+    },
+    "#lib/*": {
+      "development": "./client/lib/*.js",
+      "default": "./dist/client/lib/*.js"
+    },
+    "#extensions/*": {
+      "development": "./client/extensions/*.js",
+      "default": "./dist/client/extensions/*.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      "./server": {
+        "types": "./dist/server/index.d.ts",
+        "import": "./dist/server/index.js"
+      },
+      "./server/tokens": {
+        "types": "./dist/server/tokens.d.ts",
+        "import": "./dist/server/tokens.js"
+      },
+      "./client": {
+        "types": "./dist/client/index.d.ts",
+        "import": "./dist/client/index.js"
+      },
+      "./client/plugin": {
+        "types": "./dist/client/plugin.d.ts",
+        "import": "./dist/client/plugin.js"
+      },
+      "./client/routes": {
+        "types": "./dist/client/routes.d.ts",
+        "import": "./dist/client/routes.js"
+      },
+      "./package.json": "./package.json",
+      "./portal": {
+        "types": "./dist/portal.d.ts",
+        "import": "./dist/portal.js"
+      }
+    },
+    "imports": {
+      "#components/*": "./dist/client/components/*.js",
+      "#hooks/*": "./dist/client/hooks/*.js",
+      "#lib/*": "./dist/client/lib/*.js",
+      "#extensions/*": "./dist/client/extensions/*.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json && nocobase-db-manifests",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run --passWithNoTests",
+    "lint": "eslint . --max-warnings 0",
+    "lint:fix": "eslint . --fix --max-warnings 0",
+    "format": "prettier . --write",
+    "format:check": "prettier . --check",
+    "check": "pnpm lint && pnpm format:check && pnpm typecheck && pnpm test && pnpm build",
+    "fix": "pnpm lint:fix && pnpm format"
+  },
+  "peerDependencies": {
+    "@nocobase/app-client": "4.0.0-beta.9",
+    "@nocobase/app-server": "5.0.0-beta.2",
+    "@nocobase/db": "1.0.0-beta.26",
+    "@nocobase/i18n": "2.0.0-beta.2",
+    "@nocobase/service-provider": "0.0.2-beta.2",
+    "@nocobase/app-plugin-multi-portal": "0.0.2-beta.0"
+  },
+  "devDependencies": {
+    "@nocobase/app-testing": "0.1.0-beta.9",
+    "@nocobase/dev-config": "0.1.0-beta.25",
+    "@testing-library/jest-dom": "7.0.1",
+    "@testing-library/react": "16.3.3",
+    "@types/node": "24.13.3",
+    "@types/react": "19.2.18",
+    "@vitejs/plugin-react": "4.7.0",
+    "eslint": "10.9.1",
+    "jsdom": "30.0.1",
+    "prettier": "3.9.6",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "react-router": "7.18.3",
+    "shadcn": "4.19.1",
+    "tailwindcss": "4.3.3",
+    "tw-animate-css": "1.4.0",
+    "typescript": "6.0.3",
+    "vitest": "4.1.11"
+  }
+}
