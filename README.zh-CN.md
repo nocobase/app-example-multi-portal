@@ -4,7 +4,7 @@
 
 基于 NocoBase 3 的多门户示例应用，展示共享业务数据、角色权限和跨门户协作。ServiceHub 以设备服务为业务场景，让客户、调度员和工程师通过各自的门户，围绕同一张工单完成协作。
 
-![同一账号在 ServiceHub 的不同门户之间切换](docs/images/portal-switching.png)
+![系统管理员工作台首页：三个已安装门户及管理入口](docs/images/admin-workbench.png)
 
 - **一个账号，多个工作台**：无需退出登录，即可在调度和现场服务之间切换。
 - **不同门户，独立布局**：客户顶部导航、调度侧边栏、工程师移动端底部导航。
@@ -149,6 +149,8 @@ APP_SERVER_HOST=0.0.0.0 pnpm dev
 
 先用 **`manager` / `ServiceHub2026!`** 登录。Morgan Brooks 同时负责调度和现场服务，有自己的两张待处理任务；这个账号没有客户权限或系统管理权限。
 
+![同一账号在 ServiceHub 的不同门户之间切换](docs/images/portal-switching.png)
+
 1. 进入 **Dispatch console**，使用左侧导航查看 **Ticket queue**、**Field team** 和 **Service overview**。团队页展示真实派单情况，总览按工单状态和门店汇总。
 2. 点击 **Switch portal → Engineer workspace**。无需退出登录，同一账号立即进入自己的现场任务，页面从侧边栏切换为适合手机使用的任务卡片与底部导航。
 3. 从底部 **Completed work** 查看已完成任务；经理初始没有已完成任务，客户确认服务后会出现在这里。再通过 **Switch portal** 返回调度门户，查看全部客户工单与团队分工。
@@ -238,8 +240,6 @@ APP_SERVER_HOST=0.0.0.0 pnpm dev
 ### 管理员：门户管理与重复演示
 
 使用初始系统管理员账号登录（默认用户名为 `nocobase`）。工作台首页展示管理员可访问的已安装门户，以及 **Portal management** 和 **Restore demo data** 入口。
-
-![系统管理员工作台首页：三个已安装门户及管理入口](docs/images/admin-workbench.png)
 
 管理员进入 **系统设置 → 门户管理**，通过每行更多菜单安装、打开或卸载门户。可安装 Service insights，回到工作台展示新增入口，再卸载它展示入口隐藏。
 

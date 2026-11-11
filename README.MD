@@ -4,7 +4,7 @@ English | [简体中文](README.zh-CN.md)
 
 A NocoBase 3 example application demonstrating multiple portals, shared business data, role-based permissions, and cross-portal collaboration. ServiceHub brings these capabilities together in an equipment service scenario: customers, dispatchers, and engineers work on the same ticket through dedicated portals.
 
-![Switch between ServiceHub portals with the same account](docs/images/portal-switching.png)
+![Administrator home workbench with three installed portals and management actions](docs/images/admin-workbench.png)
 
 - **One account, multiple workspaces:** switch between dispatch and field service without signing out.
 - **A layout for each job:** customer top navigation, a dispatch sidebar, and an engineer workspace with mobile bottom navigation.
@@ -149,6 +149,8 @@ Customers access their own devices and tickets; engineers handle their assigned 
 
 Start with **`manager` / `ServiceHub2026!`**. Morgan Brooks coordinates the team and handles field work, with two assigned tasks ready to demonstrate. This account has no customer or system administration permissions.
 
+![Switch between ServiceHub portals with the same account](docs/images/portal-switching.png)
+
 1. Open **Dispatch console**. Use its sidebar to explore **Ticket queue**, **Field team**, and **Service overview**. Team assignments and status/location summaries use the actual tickets.
 2. Choose **Switch portal → Engineer workspace**. Without signing out, the same account enters its own field tasks. The sidebar gives way to task cards and mobile bottom navigation.
 3. Open **Completed work** from the bottom navigation to view finished tasks; it starts empty for the manager and fills as customers confirm completed work. Switch back to the dispatch portal to see all customers and team assignments again.
@@ -240,8 +242,6 @@ The full sequence is **Unassigned → Assigned → In progress → Awaiting revi
 ### Administrators: manage portals and repeat the demo
 
 Sign in with the initial administrator account (default username: `nocobase`). The home workbench shows the installed portals available to the administrator, along with **Portal management** and **Restore demo data**.
-
-![Administrator home workbench with three installed portals and management actions](docs/images/admin-workbench.png)
 
 Open **System settings → Portal management** and use each row's more menu to install, open, or uninstall a portal. Install Service insights to show its new workbench entry, then uninstall it to hide the entry.
 
