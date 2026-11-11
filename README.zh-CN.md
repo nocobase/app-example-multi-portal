@@ -4,6 +4,8 @@
 
 基于 NocoBase 3 的多门户设备服务 Demo。客户、调度员和工程师围绕同一张工单协作，通过不同门户看到各自需要的信息和操作。
 
+![ServiceHub 工作台：客户、调度与工程师的专属门户](docs/images/admin-workbench.png)
+
 ## 安装
 
 ### 1. 准备环境

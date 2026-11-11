@@ -4,6 +4,8 @@ English | [简体中文](README.zh-CN.md)
 
 A multi-portal equipment service demo built with NocoBase 3. Customers, dispatchers, and engineers collaborate on the same service ticket through portals tailored to their responsibilities.
 
+![ServiceHub workbench with dedicated customer, dispatch, and engineer portals](docs/images/admin-workbench.png)
+
 ## Installation
 
 ### 1. Prerequisites
