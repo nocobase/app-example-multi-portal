@@ -201,7 +201,15 @@ APP_SERVER_HOST=0.0.0.0 pnpm dev
 
 ### 管理员：门户管理与重复演示
 
+使用初始系统管理员账号登录（默认用户名为 `nocobase`）。工作台首页展示管理员可访问的已安装门户，以及 **Portal management** 和 **Restore demo data** 入口。
+
+![系统管理员工作台首页：三个已安装门户及管理入口](docs/images/admin-workbench.png)
+
 管理员进入 **系统设置 → 门户管理**，通过每行更多菜单安装、打开或卸载门户。可安装 Service insights，回到工作台展示新增入口，再卸载它展示入口隐藏。
+
+下图展示三个业务门户已安装，Service insights 保持未安装，便于演示门户扩展。
+
+![Portal management：三个已安装门户和可选的 Service insights](docs/images/portal-management.png)
 
 下一轮演示前，可在工作台使用 **Restore demo data**。恢复会删除本轮新增工单并重建预置业务数据；账号、角色和门户安装状态不变，具体范围见下节。
 

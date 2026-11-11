@@ -201,7 +201,15 @@ The full sequence is **Unassigned → Assigned → In progress → Awaiting revi
 
 ### Administrators: manage portals and repeat the demo
 
+Sign in with the initial administrator account (default username: `nocobase`). The home workbench shows the installed portals available to the administrator, along with **Portal management** and **Restore demo data**.
+
+![Administrator home workbench with three installed portals and management actions](docs/images/admin-workbench.png)
+
 Open **System settings → Portal management** and use each row's more menu to install, open, or uninstall a portal. Install Service insights to show its new workbench entry, then uninstall it to hide the entry.
+
+The screenshot below shows three installed business portals and Service insights left uninstalled for the extension demonstration.
+
+![Portal management showing installed portals and optional Service insights](docs/images/portal-management.png)
 
 Before another walkthrough, use **Restore demo data** on the workbench. This removes tickets created during the walkthrough and recreates the sample business data. Accounts, roles, and portal installation states remain unchanged; see the next section for details.
 
