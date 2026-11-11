@@ -1,473 +1,258 @@
 # ServiceHub
 
-A multi-portal equipment-service demo built with NocoBase 3. Customers report faults, dispatchers assign engineers, and engineers complete service work before customers confirm and rate it. See [the demo guide](DEMO.txt) for accounts, the five-minute walkthrough and the current packaging limitation.
+基于 NocoBase 3 的多门户设备服务 Demo。客户、调度员和工程师围绕同一张工单协作，通过不同门户看到各自需要的信息和操作。
 
-This is a full-stack application. The server runs on `@nocobase/app-server` and the browser client is React with shadcn/ui and Tailwind CSS.
+## 安装
 
-You own everything in this directory. Add pages, API routes, database tables, and business logic directly here — this is your application's source code, not a framework you extend from the outside.
+### 1. 准备环境
 
-## Upgrade this application
+- Node.js **24 或更高版本**。
+- pnpm **11.7.0**。
+- Git，以及 `nocobase/ServiceHub` 仓库的访问权限。
+- NocoBase 私有包源的读取权限：本项目使用商业多门户插件。
 
-Ask the application agent to upgrade NocoBase using the application-local [template upgrade Skill](.agents/skills/nocobase-app-upgrade/SKILL.md). This is the supported version-selection and three-way source reconciliation entry point. Before merging, read the selected target package’s `AGENTS.md`, this section and the upgrade Skill from its declared `@nocobase/app-skills` dependency, even if the application still has an older Skill. Fetch and inspect that guidance without first installing it.
-
-Complete the target’s requirements in that same upgrade: reconcile dependencies, copied template and Registry sources, application-owned table/card consumers and translations while preserving business customizations, grants, records and executed migrations. For list feedback, follow the target Skill’s `references/list-feedback-upgrade.md`. Do not finish with only a version bump, dependency update or Skill sync. Missing targets, unresolved business conflicts or failed acceptance stop completion; confirm `defaultTemplateVersion` only after the checks pass. See the target Skill’s `references/versioned-upgrade-verification.md` for package integrity records and verification after publication.
-
-## Multi-portal template
-
-This commercial template starts from OSS Default and registers `@nocobase/app-plugin-multi-portal` on Client and Server, after authentication and authorization. It includes `@nocobase/create-portal` as development tooling. The three Pro packages are released through the commercial registry workflow; the command below requires access to that registry and the released artifacts.
+默认使用 SQLite，无需单独安装数据库服务。
 
 ```bash
-pnpm create @nocobase/app@beta my-app --template @nocobase/app-template-multi-portal --registry <registry-url>
-cd my-app
-pnpm nocobase config init
-pnpm create @nocobase/portal inventory
-pnpm dev
+node --version
+npm install -g pnpm@11.7.0
+pnpm --version
 ```
 
-The generator creates and registers a minimal portal in `packages/`. It does not install it: an unrestricted administrator installs it in **System settings → Portal management** (`/settings/portals`). The administrator's homepage is the installed-portal workbench. Ordinary users retain the standard homepage; the current management API and generated portal pages require unrestricted access. No business examples or global role grants are included.
-
-Each portal owns its descriptor, pages, navigation, Layout and database resources. The host supplies the authenticated application shell, portal switcher and named database connections. Installation applies portal migrations and seeds before activation. Uninstallation disables access and resources but retains data and history. Restarting retains installation state. See [.agents/rules/multi-portal.md](.agents/rules/multi-portal.md).
-
-Business lists reuse the template's standard `DataTable` and companions from `#components/data-table`. The template declares the compatible TanStack Table v8 dependency and provides controlled server pagination/sorting; application agents should not generate an independent table engine. See the [table guide](.agents/skills/nocobase-app-development/references/frontend/references/table.md).
-
-## Getting started
-
-Configure the application, then start the development server:
+### 2. 克隆仓库
 
 ```bash
-pnpm nocobase config init
+git clone https://github.com/nocobase/ServiceHub.git
+cd ServiceHub
+```
+
+直接安装这个仓库即可，不需要再通过 `create-app` 创建应用。
+
+### 3. 配置包源并安装依赖
+
+使用具有读取权限的账号登录 NocoBase 私有包源：
+
+```bash
+pnpm login --registry=https://pkg-v3.nocobase.com/ --scope=@nocobase
+```
+
+按提示输入账号信息，密码使用私有包源提供的读取令牌（`nbr_…`）。此操作会在用户级配置中设置 `@nocobase` 的包源；其他依赖仍使用默认 npm 源。不要把令牌写进仓库。
+
+```bash
+pnpm config get @nocobase:registry
+# 应输出 https://pkg-v3.nocobase.com/
+
+pnpm install
+```
+
+私有源同时提供商业包和开源 `@nocobase` 包。若错误信息指向 `registry.npmjs.org/@nocobase/app-plugin-multi-portal`，先检查作用域包源配置。
+
+## 初始化 Demo
+
+以下步骤用于新安装的应用，须在第一次启动前完成。
+
+### 1. 生成配置
+
+```bash
+pnpm nocobase config init --dialect sqlite
+```
+
+命令生成本机的 `config.yml`，并初始化配置密钥。不要直接使用 [config.example.yml](config.example.yml) 中的占位密钥。
+
+这里涉及三类不同凭据：
+
+| 凭据                             | 用途                                             |
+| -------------------------------- | ------------------------------------------------ |
+| 包源读取令牌                     | 下载 NocoBase 依赖                               |
+| `config.yml` 中的 `secrets.keys` | 加密应用保存的敏感信息，并用于派生登录和会话密钥 |
+| 管理员及演示账号密码             | 登录 ServiceHub                                  |
+
+`config.yml` 已被 Git 忽略。迁移已有数据库时应保留原配置密钥；新建独立 Demo 时生成自己的密钥。
+
+### 2. 开启演示数据
+
+```bash
+pnpm nocobase config set app.sampleData=true
+pnpm nocobase config set client.app.title=ServiceHub i18n.defaultLocale=zh-CN client.app.defaultTheme=compact
 pnpm nocobase config check
+```
+
+首次启动会自动执行数据库迁移和种子数据，创建演示角色、6 个业务账号、6 台设备及 12 张工单。演示数据对应 3 家咖啡门店，覆盖报修、派单、处理和确认等状态。
+
+默认初始管理员在 `config.yml` 的 `users.initialAdmin` 中配置：
+
+- 用户名：`nocobase`
+- 邮箱：`admin@nocobase.com`（也可用于登录）
+- 初始密码：`admin123`
+
+如需修改初始管理员，请在首次启动前修改配置。数据库已有账号后，修改这段配置不会重置账号或密码。演示账号使用公开的测试密码，请只在隔离的演示环境中使用。
+
+## 启动应用
+
+```bash
 pnpm dev
 ```
 
-`pnpm nocobase config init` writes `config.yml` from `config.example.yml`, keeping its comments and generating the first key of `secrets.keys`, which encrypts what the application stores as a secret and from which the sign-in and session keys are derived. It is only needed once; `pnpm dev` and `pnpm start` refuse to run until it has been. `pnpm nocobase config check` loads the configuration the way a start would, connects to any database other than SQLite, and reports what would stop the application from starting or quietly misbehave.
+打开终端就绪信息中打印的应用 URL，保留完整路径（默认包含 `/main/`）。不要使用 Vite 的内部端口作为应用入口。
 
-`pnpm dev` starts the API server and the Vite client together, picks free ports if the defaults are taken, and prints the URL to open. Use the printed URL rather than assuming a port.
-
-### Develop against another backend
-
-Set `PROXY_TARGET_URL` to the backend application's public URL, including its mount path but excluding `/api`:
+需要手机或其他局域网设备访问时，可在 macOS / Linux 中运行：
 
 ```bash
-# Example only: replace /main with the backend's actual public mount path.
-PROXY_TARGET_URL=http://127.0.0.1:13000/main pnpm dev
+APP_SERVER_HOST=0.0.0.0 pnpm dev
 ```
 
-**`/main` is the fallback, not a required or fixed path.** Local development reads `APP_BASE_PATH` from the command-line environment, then `.env.local`, then `.env`, falling back to `/main` when unset. The remote path comes from `PROXY_TARGET_URL`; it is not inferred from the local `APP_BASE_PATH`. Read the target application's actual public URL before constructing this value. If it is mounted at the origin root, use the origin URL without a mount path.
+使用本机实际局域网 IP 和就绪信息中的应用端口访问。通过临时公网隧道演示时，将隧道指向应用入口端口，保留应用路径，并将公网来源加入 `auth.trustedOrigins`；开发模式按需配置 `APP_ALLOWED_HOSTS`。临时公网地址随隧道停止而失效。
 
-For example, these applications can use different paths:
+## 准备门户
+
+管理员登录后，进入 **系统设置 → 门户管理（Portal management）**，安装前三个业务门户。门户代码已随仓库提供，安装操作会启用对应门户。
+
+| 门户             | 演示角色       | 主要内容                               | 演示前状态 |
+| ---------------- | -------------- | -------------------------------------- | ---------- |
+| 客户服务台       | 客户           | 我的设备、发起报修、进度查询、服务确认 | 已安装     |
+| 运营调度台       | 调度员         | 工单总览、分配工程师、跟踪服务进度     | 已安装     |
+| 工程师工作台     | 工程师         | 分配给我的任务、接单、填写处理结果     | 已安装     |
+| Service insights | 管理员演示扩展 | 服务分析入口                           | 保留未安装 |
+
+回到首页工作台即可进入已安装且有权访问的门户。门户是否安装和账号是否有业务权限是两个独立条件；安装门户不会给所有用户自动授权。
+
+## 演示账号
+
+以下业务账号密码统一为 **`ServiceHub2026!`**。用户名或邮箱均可用于登录。
+
+| 角色            | 姓名   | 用户名       | 邮箱                            |
+| --------------- | ------ | ------------ | ------------------------------- |
+| 客户 · 星河咖啡 | 陈小满 | `customer1`  | `customer-1@servicehub.example` |
+| 客户 · 山野咖啡 | 周晴   | `customer2`  | `customer-2@servicehub.example` |
+| 客户 · 白昼咖啡 | 许乐   | `customer3`  | `customer-3@servicehub.example` |
+| 调度员          | 沈悦   | `dispatcher` | `dispatcher@servicehub.example` |
+| 工程师          | 林晨   | `engineer1`  | `engineer-1@servicehub.example` |
+| 工程师          | 顾川   | `engineer2`  | `engineer-2@servicehub.example` |
+
+客户只访问自己的设备和工单，工程师处理分配给自己的任务，调度员负责跨客户派单。使用不同浏览器配置文件分别登录三个角色，可以方便地切换展示；同一浏览器的普通标签页共享登录会话。
+
+## 五分钟演示流程
+
+1. **客户报修**：用 `customer1` 登录客户服务台，选择 Linea 商用咖啡机，提交一条“咖啡机无法加热”的报修。
+2. **调度派单**：用 `dispatcher` 登录运营调度台，找到新工单，将它分配给林晨。
+3. **工程师处理**：用 `engineer1` 登录工程师工作台，接单、填写处理结果并完成服务。
+4. **客户确认**：回到 `customer1`，查看处理记录，确认服务并评价。
+5. **展示门户扩展**：管理员在门户管理中安装 Service insights，再回工作台查看新增入口；卸载后入口隐藏。
+
+重点展示同一业务在不同角色下的视角、数据范围和可执行操作，以及门户可以独立启用的能力。手机端也可完成工单操作。客户与调度门户使用响应式表格，行操作集中在更多菜单中；工程师门户使用任务卡片。
+
+## 使用说明与截图
+
+以下截图来自实际运行的 Demo，使用预置的虚构账号和业务数据。截图展示初始数据中的不同工单，不是同一张新建工单的连续状态；实际数量会随操作变化。
+
+### 客户：报修与查询进度
+
+使用 `customer1` 登录并进入 **客户服务台**。上方显示设备和服务统计，“我的设备”列出当前客户的设备，下方是该客户的服务工单。
+
+![客户服务台：设备概览、报修入口与服务工单](docs/images/customer-portal.png)
+
+1. 点击右上角 **发起报修**，选择报修设备。
+2. 填写问题标题和详细描述，选择紧急程度。例如标题“咖啡机无法加热”，描述“今天开店后水温一直偏低，重启后仍无法正常加热”。
+3. 点击 **提交报修**。成功后工单出现在列表，状态为 **待分配**，记下工单编号供后续演示查找。
+4. 点击工单标题，或行末更多菜单中的 **查看详情**，查看设备、工程师、问题描述和处理进度。
+
+可以按工单编号、问题或门店搜索，也可切换状态筛选。客户账号只能看到自己的数据；切换到 `customer2` 可以展示不同客户间的数据隔离。
+
+### 调度员：分配工程师
+
+使用 `dispatcher` 登录并进入 **运营调度台**。这里汇总不同客户的服务工单，适合统一查看状态和安排服务人员。
+
+![运营调度台：跨客户工单列表与状态筛选](docs/images/dispatch-portal.png)
+
+1. 搜索刚才记录的工单编号，或切换 **待分配** 筛选。
+2. 打开工单详情，也可以从行末更多菜单选择 **分配工程师**。
+3. 在详情中的工程师选择框选择 **林晨**，提交分配。
+4. 分配成功后，工单变为 **待接单**，工程师字段显示林晨。
+
+后续用 `engineer1` 跟进这张工单。若分配给顾川，则应使用 `engineer2` 登录。
+
+### 工程师：接单与提交结果
+
+使用 `engineer1` 登录 **工程师工作台**。任务卡片显示分配给当前工程师的工单、客户、地址、设备和状态；手机端也能完成操作。
+
+<img src="docs/images/engineer-mobile.png" alt="工程师移动端：任务统计、状态筛选和任务卡片" width="390" />
+
+1. 在 **全部** 中找到新分配的任务，点击 **查看任务**。
+2. 在详情中点击 **接单并开始处理**，状态变为 **处理中**。
+3. 处理完成后再次打开任务，填写 **处理结果**，例如“清理加热管水垢，更换温度传感器，试运行后水温恢复正常”。
+4. 点击 **提交处理结果**，状态变为 **待确认**，等待客户确认。
+
+只有分配给当前工程师且状态允许的任务，才会出现相应操作。找不到任务时，先切回“全部”，再确认调度员分配的工程师账号。
+
+### 客户：确认并评价
+
+回到 `customer1` 的客户服务台，必要时刷新页面获取最新状态。
+
+1. 切换 **待确认**，找到刚才的工单。
+2. 打开详情，阅读工程师填写的处理结果。
+3. 选择服务评价并提交确认，也可以从行末菜单进入 **确认并评价**。
+4. 工单变为 **已完成**，详情保留处理结果和服务评价。
+
+完整状态流程为：**待分配 → 待接单 → 处理中 → 待确认 → 已完成**。操作按钮随角色和当前状态变化，不能跳过前置步骤。
+
+### 管理员：门户管理与重复演示
+
+管理员进入 **系统设置 → 门户管理**，通过每行更多菜单安装、打开或卸载门户。可安装 Service insights，回到工作台展示新增入口，再卸载它展示入口隐藏。
+
+下一轮演示前，可在工作台使用 **恢复演示数据**。恢复会删除本轮新增工单并重建预置业务数据；账号、角色和门户安装状态不变，具体范围见下节。
+
+## 恢复演示数据
+
+管理员在首页工作台点击 **恢复演示数据** 并确认，可以清除当前 Demo 的设备、工单及处理记录，恢复预置的 12 张工单，方便下一轮演示。
+
+- 账号、角色和门户安装状态会保留。
+- 仅开启 `app.sampleData` 时允许恢复。
+- 此功能不会补建缺失的演示账号或角色。
+
+如果首次初始化时没有开启演示数据，停止开发服务，执行：
 
 ```bash
-APP_BASE_PATH=/local PROXY_TARGET_URL=http://127.0.0.1:13000/crm pnpm dev
-# /local/api/users -> http://127.0.0.1:13000/crm/api/users
-# /local/ws        -> ws://127.0.0.1:13000/crm/ws
+pnpm nocobase config set app.sampleData=true
+pnpm nocobase db sample
+pnpm dev
 ```
 
-This runs Vite with your local client source and proxies API and WebSocket requests to that application. It does not start a local backend, allocate its port, wait for its health endpoint, or watch server configuration/plugins. Existing `beforeDev` hooks still run to prepare client artifacts. Open the printed **Local** URL (the Vite port); **Backend** identifies the target.
-
-The target can be another local project running `pnpm dev`, or an HTTP(S) deployment. Use its printed application URL, not its Vite URL. Local `APP_BASE_PATH` and the remote mount path may differ: local `/main/api/users` can map to remote `/crm/api/users`. Trailing slashes are accepted. Credentials, query strings, and fragments are not accepted in the target URL.
-
-Requests use the remote backend's data and permissions, including writes. Only `<APP_BASE_PATH>/api` and `<APP_BASE_PATH>/ws` are proxied; application root callbacks and absolute URLs returned by the backend keep their original routing. Cookie domain/path scopes are adapted to the local application. HTTP and WebSocket requests whose Origin matches the local request's protocol and Host are forwarded with the target Origin, so browser authentication and realtime connections pass the backend's same-origin checks. Same-origin Referer URLs within the local app base are mapped to the target app base as well; requests without Origin keep it absent. Other origins and referers remain unchanged and subject to backend validation. HTTPS-only cookie requirements remain enforced, and authentication flows using explicit callback URLs still require appropriate callback configuration.
-
-The variable can also be set in `.env` or `.env.local`; the command-line environment takes precedence. Restart `pnpm dev` after changing the target. Without this variable, development still starts both the local backend and Vite. Production builds ignore it.
+`db sample` 用于补跑之前跳过的样例初始化，仅适用于开发环境；生产部署会拒绝执行。不要用清空整个数据库代替日常演示重置。
 
-Use `APP_SERVER_PORT` to choose the local application port in either development mode. With `PROXY_TARGET_URL` set, it selects Vite's preferred port (5173 when unset); without a proxy target, it selects the local backend's preferred port (13000 when unset), while Vite still starts from 5173. If the preferred port is occupied, development selects the next available port and prints the actual URL. The remote backend address is always taken from `PROXY_TARGET_URL`.
+## 常见问题
 
-```bash
-APP_SERVER_PORT=13399 PROXY_TARGET_URL=http://127.0.0.1:13000/main pnpm dev
-# Local: http://127.0.0.1:13399/main/ when 13399 is available.
-# Replace /main with the remote application's actual mount path.
-```
+### 安装依赖出现 401、403 或 404
 
-### Review your configuration
-
-`pnpm nocobase config init` wrote `config.yml` from `config.example.yml`, with a generated `secrets.keys` key filled in. It gets you running on SQLite; adjust it for your situation:
-
-- **Database.** SQLite needs no server and works as it is. Another one means installing its driver first — `pnpm add @nocobase/db-postgres`, and `pnpm remove @nocobase/db-sqlite` if nothing else uses SQLite — then `pnpm nocobase config init --dialect postgres --force` to rewrite the connection, and `pnpm nocobase config set` for its settings, with `--from-env` for the password so it stays out of the shell history. Which dialects the application can run on is decided by what it depends on, not by this file: a driver it does not have cannot be introduced from here.
-- **Change a value** with `pnpm nocobase config set key=value`, which keeps the comments and refuses a section the application does not know. Values that differ per machine — `APP_SERVER_PORT`, `APP_SERVER_HOST`, `APP_PUBLIC_ORIGIN` — are better set in the environment, which is applied over this file; `config set` says when an environment variable overrides what it wrote.
-- **Where the application is served.** `APP_BASE_PATH` is the public mount path, `/main` by default, so the development URL looks like `http://127.0.0.1:13000/main/`. `APP_SERVER_PORT` and `APP_SERVER_HOST` change what the server binds to.
-- **Anything a feature you enable requires** — mail delivery, IM webhooks, storage. Every section is already here, commented out where it is optional.
+检查 `@nocobase` 作用域是否指向 `https://pkg-v3.nocobase.com/`，以及读取令牌是否有效、具有相应包的权限。npmjs 上的商业包 404 不能说明私有包未发布。
 
-`config.yml` is gitignored because it holds your `secrets.keys`. Deploy it through your secret management rather than committing it.
+### 提示配置密钥未配置
 
-Keep the key: what was encrypted under it cannot be read without it. To rotate it, put a new key first in `secrets.keys` with a higher version and keep the old one after it, run `pnpm nocobase secrets rotate` (`pnpm nocobase secrets status` shows what is left to reseal), then remove the old key. Changing the current key signs everyone out.
+新安装先执行 `pnpm nocobase config init --dialect sqlite`，再执行 `pnpm nocobase config check`。已有数据库应恢复原来的 `config.yml` 或密钥配置，不要随意替换密钥。
 
-To run against a production build instead:
+### 能登录，但看不到业务门户
 
-```bash
-pnpm build
-pnpm start
-```
+先由管理员确认门户已安装，再确认当前用户具有对应角色。用新注册账号登录不会自动获得演示角色；使用上面的演示账号，或在用户与权限管理中明确分配角色。
 
-## Project structure
+### 演示账号不存在或密码不对
 
-```text
-client/                  Browser application
-├── routes.ts            Your page routes
-├── pages/               Your page components
-├── components/          Your components
-│   └── ui/              shadcn/ui primitives
-├── layouts/             App layout
-│   └── components/      Layout containers, navigation, branding and account controls
-├── routing/             Route rendering, access checks, loading and error UI
-├── locales/             Your translated strings
-├── theme/               App-wide theme and light/dark selector
-├── extensions/          Application-owned copies of plugin-published UI
-├── plugins.ts           Which plugins the browser loads
-├── react-providers.ts   Your React context providers
-├── service-provider.ts  Your client startup logic
-└── runtime.ts           Composition root tying the above together
+确认第一次初始化前已经开启 `app.sampleData`。若样例初始化被跳过，使用上面的 `db sample` 流程。管理员密码与业务演示账号密码不同；已有实例以其实际账号设置为准。
 
-server/                  API server
-├── routes/              Your HTTP endpoints
-├── providers/           Your services and their lifecycle
-├── config/              Application configuration composition
-├── plugins.ts           Which plugins the server loads
-├── app.ts               Application assembly
-├── runtime.ts           Composition root
-├── standalone.ts        Node entry point
-└── embedded.ts          Entry point when a host process mounts it
+### 默认语言或主题没有变化
 
-cli/                     Command line
-├── plugins.ts           Which plugins contribute commands and build and dev hooks
-└── commands/            Your own commands, under the app topic (created when needed)
+浏览器已保存的个人选择优先于默认配置。通过界面切换语言或主题，或使用新的浏览器配置文件查看默认效果。
 
-database/
-└── main/
-    ├── migrations/      Your schema history (initially empty)
-    └── seeds/           Your required initial data (initially empty)
+## 开发与部署
 
-tests/                   Unit and integration tests, run by Vitest
-└── playwright/          Browser tests against a running application, run by Playwright
-config.yml              Your configuration, written by pnpm nocobase config init; gitignored
-config.example.yml       Documented configuration template
-```
+业务前端位于 [client/pages/servicehub](client/pages/servicehub)，接口位于 [server/routes/servicehub.ts](server/routes/servicehub.ts)，数据初始化位于 [database/main/seeds](database/main/seeds)。四个门户包位于 [packages](packages)。
 
-The three files named `runtime.ts`, `plugins.ts`, and `routes.ts` are composition roots: they list what the application is made of. Reading them tells you what is loaded and in what order.
+| 命令             | 用途                               |
+| ---------------- | ---------------------------------- |
+| `pnpm dev`       | 启动开发服务                       |
+| `pnpm typecheck` | 检查客户端、服务端和工具代码的类型 |
+| `pnpm test`      | 运行自动化测试                     |
+| `pnpm build`     | 构建应用及运行时依赖               |
+| `pnpm start`     | 启动构建后的应用                   |
 
-## Scripts
+生产部署需单独准备配置、持久化存储及包源凭据，详见 [构建与部署说明](.agents/rules/build-and-deploy.md)。[scripts/start-demo.sh](scripts/start-demo.sh) 是现有 Linux 演示主机的维护脚本，依赖该主机的服务配置和已构建前端；新安装使用上面的 `pnpm dev` 流程。
 
-`pnpm dev`, `pnpm build` and `pnpm start` are the application's scripts. Everything else is `pnpm nocobase <topic> <command>`, which pnpm resolves to the application's CLI without a script; `pnpm nocobase --help` lists them all.
-
-### Everyday development
-
-| Script             | What it does                                                                                                                    |
-| ------------------ | ------------------------------------------------------------------------------------------------------------------------------- |
-| `pnpm dev`         | Start the API server and client with hot reload                                                                                 |
-| `pnpm build`       | Build the client and server into `dist/`                                                                                        |
-| `pnpm start`       | Run the built server; requires `pnpm build` first                                                                               |
-| `pnpm build --tar` | Build, then pack `dist/`, `config.example.yml` and the `Dockerfile` with its `.dockerignore` into `storage/exports/dist.tar.gz` |
-
-### Database
-
-| Command                              | What it does                                                                                                                                                                                        |
-| ------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `pnpm nocobase db apply`             | Apply pending migrations from your `database/main/migrations/` and from every registered plugin, then pending seeds from `database/main/seeds/` and from those plugins                              |
-| `pnpm nocobase db reset`             | Destructive: drop every managed schema object, then rerun all migrations and seeds from empty; asks first, and needs `--force` in CI                                                                |
-| `pnpm nocobase db repair`            | Realign recorded migration and seed checksums with the current sources; `--dry-run` reports without writing                                                                                         |
-| `pnpm nocobase collections generate` | Write `collection.json`, `metadata.json` and `schema.json` for every Collection under `database/<connection>/collections/`, plus a `_manifest.json`; `--check` fails when the files are out of date |
-
-Migrations and seeds also run automatically on startup while `database.connections.main.migrations.autoRun` is `true` in `config.yml`. Run `pnpm nocobase db apply` explicitly when you want to apply a change without restarting. Both halves run only what is pending, so running it on an already-migrated database applies seeds alone.
-
-Database tasks support `--connection <name>` and `--all`; no argument targets `database.default`. Per-connection source and upgrade rules are documented in [migrations and seeds](.agents/skills/nocobase-app-development/references/migrations.md).
-
-### Checks
-
-| Script               | What it does                                                 |
-| -------------------- | ------------------------------------------------------------ |
-| `pnpm test`          | Run the test suite once                                      |
-| `pnpm test:watch`    | Re-run tests as files change                                 |
-| `pnpm test:coverage` | Run tests and write a coverage report                        |
-| `pnpm typecheck`     | Typecheck the client, tooling, and server                    |
-| `pnpm lint`          | Report lint problems                                         |
-| `pnpm fix`           | Fix lint problems, then format                               |
-| `pnpm check`         | Everything above plus a build; what to run before committing |
-
-`pnpm nocobase locales check` reports a language declared in `client/locales/` but not `server/locales/`, or the reverse, and exits nonzero until the lists align. The browser builds its language picker from the client list, so a client-only language still works in the interface; server messages fall back to English and the language control explains that fallback. Add the matching server locale when server-produced text should use the same language.
-
-### Plugins
-
-Mail (`@nocobase/app-plugin-mail`) is included and registered on the client and server. Configure mailbox providers under `mail.providers` in `config.yml` before connecting accounts; no provider credentials or demo mailboxes are included. See the [Mail configuration guide](.agents/skills/nocobase-app-plugin-mail/references/configuration-and-accounts.md). The plugin provides services and UI components; applications compose their own mailbox pages.
-
-Plugins add features to your application. Let these commands edit `package.json`, `client/plugins.ts`, and `server/plugins.ts` for you rather than editing those files by hand.
-
-| Command                                  | What it does                                                |
-| ---------------------------------------- | ----------------------------------------------------------- |
-| `pnpm nocobase plugin register <name>`   | Install a plugin and wire it into the client and server     |
-| `pnpm nocobase plugin unregister <name>` | Remove a plugin and its wiring                              |
-| `pnpm nocobase plugin update [name]`     | Upgrade one or all registered plugins and re-sync skills    |
-| `pnpm nocobase plugin inspect <name>`    | Report a plugin's registration state; read-only             |
-| `pnpm nocobase package remove <name>`    | Remove a direct NocoBase package and its synchronized Skill |
-| `pnpm nocobase skills sync`              | Sync direct NocoBase package Skills into `.agents/skills/`  |
-
-`pnpm install` automatically runs `pnpm nocobase skills sync` through the application's `postinstall` hook. Run `pnpm nocobase skills sync` manually when install scripts were disabled or Skills need refreshing.
-
-Use a full package name, as with `plugin register` and `plugin unregister`; short names such as `authentication` also work. The optional name is a positional argument, not `--plugin`.
-
-```bash
-pnpm nocobase plugin update @nocobase/app-plugin-authentication  # Update one registered plugin
-pnpm nocobase plugin update authentication                      # Equivalent short name
-pnpm nocobase plugin update                                     # Update all registered plugins
-pnpm nocobase plugin update @nocobase/app-plugin-authentication --dry-run  # Preview only
-```
-
-Without a name, the command collects registered plugins from `client/plugins.ts`, `server/plugins.ts`, and `cli/plugins.ts`. It uses the application's package manager; with pnpm, `update` follows the declared version ranges without `--latest`. An unregistered name is rejected, and an application with no registered plugins is left unchanged. After a successful package update, all registered plugins' agent skills are re-synchronized, even when only one package was selected.
-
-Ordering in `client/plugins.ts` and `server/plugins.ts` is contribution order, and a plugin is enabled by appearing in the array. Reorder entries or pass a plugin its options by hand; leave adding and removing entries to the commands.
-
-### Removing a NocoBase package
-
-Before removing a direct `@nocobase/*` dependency, search the application's imports, plugin registrations, routes, services, configuration keys, tests, and build scripts for references to it. Migrate or remove those references first. The removal command updates package metadata and synchronized Skills; it does not rewrite application source or configuration and cannot decide whether the capability is still required.
-
-```bash
-pnpm nocobase package remove @nocobase/example
-pnpm nocobase package remove @nocobase/example --dry-run
-pnpm nocobase package remove @nocobase/example --json
-```
-
-For an ordinary package, the command uses the application's package manager to remove the dependency and update both `package.json` and the lockfile, then removes only the Skill directories recorded as owned by that package. For an `@nocobase/app-plugin-*` package, it reuses the `plugin unregister` steps so Client, Server, and CLI registrations are removed together with the dependency and its Skills. `pnpm nocobase plugin unregister <name>` remains available when the task is specifically expressed as unregistering a plugin.
-
-After an interrupted or manual removal, make sure the manifest no longer declares the package and run a full `pnpm nocobase skills sync` to reconcile stale package-owned output. Passing a package already absent from the manifest to `package remove` can clean its recorded historical Skill ownership without uninstalling any other package.
-
-### Diagnostics
-
-| Command                       | What it does                                                                                |
-| ----------------------------- | ------------------------------------------------------------------------------------------- |
-| `pnpm nocobase dist retarget` | Replace native binaries with the target platform's; part of `pnpm build`                    |
-| `pnpm nocobase dist check`    | Check that everything your server and CLI import reaches a deployment; part of `pnpm build` |
-
-#### Deploying to a different machine
-
-`pnpm build` produces `dist/`, which is the whole deployment: copy it to a server and run it. The build already ran `pnpm install --prod` inside `dist/`, so the tree ships with its `node_modules` and needs no install step on the server. It also keeps its own `package.json`, so `pnpm install --prod` run inside `dist/` on the server reinstalls exactly the same set: useful when `node_modules` was left out of a copy, never required after a normal build.
-
-Client packages are not among them. Plugins declare what their browser code needs as peer dependencies, so your application installs one shared copy for its Vite build, while `dist/` opts out of peer installation entirely — `lucide-react`, `@base-ui/react` and the rest never reach a server that has no browser in it.
-
-**The build targets the machine you run it on**, so `pnpm build && pnpm start` works. Deploying elsewhere means saying where:
-
-```bash
-pnpm build --help                                 # all build options
-pnpm build                                        # this machine
-pnpm build --target linux-x64                     # most Linux servers
-pnpm build --target linux-arm64                   # ARM servers, Graviton
-pnpm build --target linux-x64-musl                # Alpine, and most slim container images
-pnpm build --target linux-x64 --node-version 24   # explicitly target Node 24
-```
-
-A `.node` binary is compiled for one platform, architecture, C library, and Node version at once, so a build made on a Mac installs binaries a Linux server cannot load. `--target` sets platform, architecture, and C library together, because they are chosen together: `linux-x64` and `linux-x64-musl` are different binaries, and Alpine needs the musl one. If you are unsure, `ldd --version` on the server prints `musl` for musl and `GNU libc` otherwise.
-
-`--node-version` takes the major version your server runs, separately, because the same Linux host may run any of several. The binary retargeter knows ABI mappings for 20, 22, 24, and 26; the application itself requires Node >=24.
-
-`pnpm build --help` (or `-h`) lists build options and exits without loading build dependencies, running hooks, or modifying `dist/`. Every successful build records `nocobase.buildTarget` in `dist/package.json`, including builds with no native modules: `platform`, `arch`, `libc`, `nodeMajor`, and `nodeAbi`. Use `libc` only for Linux; its value on other platforms is a compatibility placeholder. Deployment checks should compare these fields with the host runtime and also respect `engines.node`. With `--target current` (the default), the Node version and ABI come from the running process; an explicit platform target defaults to Node 24 unless `--node-version` is supplied.
-
-For example, `pnpm build --target linux-x64 --node-version 24` produces:
-
-```json
-{
-  "nocobase": {
-    "buildTarget": {
-      "platform": "linux",
-      "arch": "x64",
-      "libc": "glibc",
-      "nodeMajor": 24,
-      "nodeAbi": 137
-    }
-  }
-}
-```
-
-`nodeMajor` describes the target runtime, not the Node version used to run the build. No target patch version is implied. These fields provide platform and Node ABI checks for deployment; they do not describe system libraries, CPU instruction requirements, or other runtime prerequisites.
-
-If your application has no native modules — `pg`, `mysql2`, and `tedious` are all plain JavaScript — no platform-specific binaries need retargeting. The build still records the selected target, and the deployment runtime must satisfy `engines.node`.
-
-#### Serving static assets from a CDN
-
-Set `CDN_BASE_URL` when building to use a CDN for Vite-generated asset URLs:
-
-```bash
-CDN_BASE_URL=https://cdn.example.com/my-app/v1/ pnpm build
-```
-
-Use a full HTTPS URL ending in `/`. The build reads the process environment first, then `.env.local`, then `.env`. Unset, empty or whitespace-only values keep the default relative base (`./`). Development ignores this variable. This is a build parameter, not a `config.yml` option or a runtime variable listed by `pnpm nocobase config variables` or `dist/variables.json`; changing it requires rebuilding.
-
-Upload the static files in `dist/client/` to the configured CDN prefix, preserving their paths. For example, `dist/client/assets/index-abc.js` must be available at `https://cdn.example.com/my-app/v1/assets/index-abc.js`. Configure the CDN to allow cross-origin module and font requests from the application origin. A release-specific prefix keeps different builds separate; retain assets needed by clients still running an older release.
-
-Keep the complete `dist/client/` tree on the application server, and serve the application's HTML through it so runtime configuration is injected. The CDN setting changes Vite-processed HTML, JavaScript and CSS resource URLs, and static files addressed with `resolveAssetUrl`, including this template's logos:
-
-```tsx
-import { resolveAssetUrl } from '@nocobase/app-client';
-
-<img src={resolveAssetUrl('/assets/logo-mark.png')} alt='Logo' />;
-```
-
-Pass the file's path relative to `dist/client/`, with or without a leading slash. `resolveAssetUrl` reads `import.meta.env.BASE_URL`, which Vite replaces with the configured `base` during the application build; the browser does not read `CDN_BASE_URL` from the server environment. With an absolute HTTP(S) CDN base it returns the CDN URL, otherwise it falls back to `resolveAppUrl` and the runtime `APP_BASE_PATH`. Already resolved URLs are preserved. Use `resolveAppUrl` for API URLs, page links and runtime-generated resources; the CDN must actually contain a file before it can be served there.
-
-#### Packing the build
-
-`pnpm build --tar` writes `storage/exports/dist.tar.gz`, the artifact `@nocobase/app-installer` installs on a server.
-
-The archive has two levels: `config.example.yml`, `dist/` and, when the application has them, the `Dockerfile` and `Dockerfile.dockerignore` sit at the root, and the build is inside `dist/`. A server builds the image from the extracted archive alone with `docker build --build-arg DIST=prebuilt .`. What `dist/` holds varies with the application; this is the shape:
-
-```text
-dist.tar.gz
-├── Dockerfile
-├── Dockerfile.dockerignore
-├── config.example.yml
-└── dist/
-    ├── cli/
-    ├── client/
-    ├── node_modules/
-    ├── server/
-    ├── package.json
-    └── pnpm-workspace.yaml
-```
-
-Combine it with `--target` when the archive is for another machine:
-
-```bash
-pnpm build --target linux-x64 --tar
-```
-
-#### Building a Docker image
-
-For a source build using a CDN, pass its URL as a build argument:
-
-```bash
-docker build --build-arg CDN_BASE_URL=https://cdn.example.com/my-app/v1/ -t my-app .
-```
-
-With `DIST=prebuilt`, set `CDN_BASE_URL` on the earlier `pnpm build` command instead: the image packages the existing client files unchanged. Setting `CDN_BASE_URL` on a prebuilt image build or with `docker run -e` cannot change their compiled URLs. The source build does not read the host's `.env`; use the build argument.
-
-`Dockerfile` builds this application from its sources into a production image. From the project root:
-
-```bash
-docker build -t my-app .
-```
-
-The build runs `pnpm build` inside the container, and the image holds only `dist/` and `config.example.yml`. `Dockerfile.dockerignore` keeps `config.yml`, `.env`, `storage/`, and `node_modules` out of the build context; keep the two files together. Settings in `.env` do not reach the image, so pass them to the container as environment variables.
-
-The client is not tied to a mount path, so choose it when starting the container, `-e APP_BASE_PATH=/crm`; the image defaults to `/main`. The build runs on the builder's own architecture and cross-targets native modules, so `docker buildx build --platform linux/amd64,linux/arm64` compiles nothing under emulation.
-
-To package a `dist/` you have already built instead, build it for the image's platform and pass `DIST=prebuilt`. Nothing is installed or compiled in the image, and it works in any directory that holds the build:
-
-```bash
-pnpm build --target linux-x64
-docker build --platform linux/amd64 --build-arg DIST=prebuilt -t my-app .
-```
-
-`--target` and `--platform` must name the same architecture: Docker otherwise builds for the machine it runs on, which on Apple silicon is `linux/arm64`. The image build fails unless `dist/` was built for `linux` with glibc, the image's architecture, and Node 24, and unless it records `nocobase.relocatable`, which an `@nocobase/app-cli` from before relocatable builds does not. `dist/.env`, which `pnpm build` fills from your local `.env` files, is never copied in. One `dist/` covers one architecture, so a multi-platform image has to be built from source.
-
-Run it with the configuration and data mounted, never copied in:
-
-```bash
-docker run -d --init -p 13000:13000 \
-  -v ./config.yml:/app/config.yml:ro \
-  -v ./storage:/app/storage \
-  my-app
-```
-
-The image runs as the `node` user without pnpm, so `storage/` must be writable by UID 1000, and application commands run through `node dist/cli/index.js`, as in `docker run --rm -v ./config.yml:/app/config.yml:ro my-app node dist/cli/index.js config check`.
-
-#### Adding a dependency
-
-Where a package goes depends on which half of your application imports it.
-
-| Imported from                     | Declare it in     |
-| --------------------------------- | ----------------- |
-| `server/`, `database/`, or `cli/` | `dependencies`    |
-| `client/`, build tooling, tests   | `devDependencies` |
-
-`dist/package.json` is generated from `dependencies` and is what a server installs, so a package in `devDependencies` is missing there however well it works locally. Client packages need nothing at runtime — Vite resolves and inlines them into `dist/client` while building.
-
-Plugins' browser packages need nothing from you: a plugin declares those as peer dependencies, so installing the plugin brings one shared copy into your application, and `dist/` never installs them.
-
-`pnpm build` verifies the server half and fails the build if something is missing, naming the package. One case it cannot check is an import whose name is assembled while the program runs:
-
-```ts
-await import(`${name}/index.js`);
-```
-
-Nothing can tell in advance which package that names, so declare it in `dependencies` when you write the code.
-
-#### When the build or the deployment goes wrong
-
-**`Cannot find module` on the server, but it runs locally.** The package is in `devDependencies`, which `dist/package.json` is not generated from. Move it to `dependencies` and rebuild.
-
-**A browser package fails to resolve while building your application.** A plugin declares it as a peer dependency and something has to provide it. Add it to your `devDependencies`.
-
-**`Error loading shared library`, `invalid ELF header`, or a bare reference to a `.node` file at startup.** The binary does not match the server. Compare what the build targeted against the server:
-
-```bash
-node -e "console.log(require('./dist/package.json').nocobase.buildTarget)"
-node -p "process.platform + '-' + process.arch"   # on the server
-node -p "process.versions.modules"                # on the server: the ABI
-```
-
-Rebuild with a matching `--target` and `--node-version`. ABI 115 is Node 20, 127 is Node 22, 137 is Node 24, 147 is Node 26.
-
-**`no prebuilt binary for <target>` during the build.** The package publishes no build for that combination. Check whether the version you depend on supports the target, and whether a musl build exists if you asked for one — musl coverage is thinner than glibc.
-
-## Configuration
-
-`server/config/` and `client/config/` contain editable TypeScript defaults. `config.yml` holds environment-specific overrides, written by `pnpm nocobase config init` and yours to edit from there. It is gitignored because it carries your `secrets.keys`; deploy it through your secret management rather than committing it. It is generated from `config.example.yml`, which is kept beside it as the reference for every option.
-
-Two settings decide where the application is reachable:
-
-- `APP_BASE_PATH` is the public path the application is mounted at, `/main` by default. The browser API base URL is derived from it as `<APP_BASE_PATH>/api`.
-- `APP_PUBLIC_ORIGIN` is the external origin used to build callback and redirect URLs. Set it in production. It must not repeat the base path — the runtime joins the two.
-
-An environment variable a section declares takes precedence over the file, and the file over the code defaults. `pnpm nocobase config env` lists the variables and whether each is set; `pnpm nocobase config variables` describes each one — what it sets, whether it is a secret, whether a deployment must supply it — and `pnpm build` writes that description to `dist/variables.json`. `DB_*` set the main database connection, `INITIAL_ADMIN_USERNAME`, `INITIAL_ADMIN_EMAIL` and `INITIAL_ADMIN_PASSWORD` the first administrator, and `APP_SAMPLE_DATA=true` loads the sample data when the database is first installed. `${NAME}` in `config.yml` is not expanded.
-
-## Testing
-
-Tests live in `tests/`, never beside the source they cover. Group tests by the source they cover: `tests/client/` for pages, components and client logic; `tests/server/` for services and routes; `tests/database/` for migrations and seeds; `tests/cli/` for application commands; and `tests/project/` for package configuration and build artifacts. Create optional directories with their first test. Vitest projects select jsdom for client tests and Node for the other groups, so no per-file environment override is needed. Both projects run files sequentially because client integration tests also provision databases; client setup files apply only to the client project. Keep shared helpers and data in `tests/helpers/` and `tests/fixtures/`, without test files. Browser tests belong in `tests/playwright/`, which Vitest skips. Playwright does not start the application: start it first (`pnpm dev`, or `pnpm build` and then the built application), then run `pnpm test:e2e`; each test reads the application URL, including its base path, from `APP_URL`. Tests that only need a real server, real authentication, or a real database run under Vitest with `createAppTest()` from `@nocobase/app-testing/server`.
-
-Application tests use the `/server`, `/client` and `/cli` entries of `@nocobase/app-testing`. Start page tests from `tests/client/page-harness.test.tsx`: it uses `renderWithApp()` with real application hooks, strict translations, permission checks and a test toaster. Prefer an actual test server for application requests. Use `answerApi()` for cases that require controlled protocol responses, and replace an external service through `services` only when the real boundary cannot be exercised, without also registering its owning plugin. The template's Vitest configuration includes client plugins in custom package scopes so their contexts and service tokens remain shared. See `.agents/skills/nocobase-app-development/references/testing.md` for fixture ownership and complete server, migration and CLI examples.
-
-For authentication, permissions and persisted page behavior, use `tests/helpers/authenticated-client.tsx`. It starts the real application on isolated databases, signs in through its API, and forwards requests with a cookie jar to the in-process server. `tests/setup/application-environment.ts` keeps the DOM in jsdom and loads server dependencies through Vite's server environment so Node workers are not rewritten as browser workers. Prefer real components, hooks and services; inject a transport failure or delay only when the scenario requires it. Verify the final UI and server state after retries and permission reloads, not just that a request was called.
-
-### Notification verification
-
-Exercise the application's business notification flow, or use a server-side command resolving `notificationServiceToken` and calling `send()` with complete messages and explicit recipients. Inspect the returned notification ID through the protected `/api/notifications/logs` API or the logs page installed by the application. Log access requires `page:notification.logs` `access`.
-
-## API documentation
-
-The application documents every `/api` endpoint it serves — its own routes, every registered plugin's, the data endpoints and Better Auth's sign-in endpoints — in an OpenAPI 3.1 document:
-
-- Swagger UI: `<origin><APP_BASE_PATH>/api/swagger/docs`, such as `http://127.0.0.1:13000/main/api/swagger/docs`
-- JSON: `<origin><APP_BASE_PATH>/api/swagger`
-
-Only a signed-in user or an API key may read them; anyone else gets `401`. Open the Swagger UI in a browser where you are signed in, or, from a script, send an API key created with `POST <APP_BASE_PATH>/api/apiKeys` in the `x-api-key` header. Swagger UI's **Authorize** button takes a key too and keeps it across reloads.
-
-```bash
-curl -H "x-api-key: <key>" http://127.0.0.1:13000/main/api/swagger
-```
-
-Replace `/main` with the application's `APP_BASE_PATH`. An application without the authentication plugin registers no way to tell who is asking, so it does not serve the documentation at all and both URLs answer `404`. There is no setting that makes it public.
-
-## Working with an AI agent
-
-`AGENTS.md` describes how to build features here, and `.agents/skills/` contains package-owned guidance generated by `pnpm nocobase skills sync`. Give an agent an API key when it needs to call the application: it learns the available endpoints from the API document above rather than from route sources. If you use Claude Code, `CLAUDE.md` points at the same guidance. Keep application-specific rules in committed `AGENTS.md` files because synchronization replaces package-owned Skill directories.
-
-## License
-
-MIT
-
-## Runtime paths and application creation
-
-`runtime.paths`, configuration context `paths`, and `app.paths` share one resolved `AppPaths` object. Use `paths.storage('...')`, `paths.database('...')`, or the corresponding directory fields. `AppPathOptions` is input only; application path policies run before the final object is created and configuration is loaded. Standalone entries declare the deployment root in `server/runtime.ts` so the server and CLI share persistent storage outside the compiled code directory. That storage is `storage/` under the deployment root unless `APP_STORAGE_DIR` names another directory, absolute or relative to the deployment root; set it when the deployment root itself is replaced on every release, as an installer that keeps one directory per release does.
-
-`server/app.ts` calls `createAppFromRuntime(runtime)` to transfer configuration, paths, mode and Host logging policy and bind `runtime.app`. Keep Provider, middleware and route registration explicit and ordered; `startApplicationInScope` owns startup and shutdown binding.
-
-## Strict startup verification
-
-Set `NOCOBASE_STRICT_STARTUP=true` when running `pnpm dev` or `pnpm start` in automated verification. Startup failures, including job import failures, exit nonzero after resource cleanup. Strict dev runs the server without watch mode so a failed server cannot remain hidden behind a watcher; restart the command after server or configuration changes. Client HMR remains available. Omit the variable or set it to `false` for normal development with server hot reload. Request errors and individual job execution failures do not terminate the application.
-
-## Internal workspace packages
-
-The application can also be the root of a pnpm workspace, with internal packages under `packages/*` and the existing `client/`, `server/` and `database/` directories unchanged. New projects receive this workspace pattern automatically. Internal packages use `workspace:*` dependencies and may remain private. Run installation, development and deployment builds from the application root; `pnpm check` includes the internal packages' own checks. See [internal packages](.agents/rules/workspace.md) for configuration and development conventions.
-
-### Registration feedback
-
-Password registration signs in new accounts by default (`auth.emailAndPassword.autoSignIn: true` in `server/config/auth.ts` and `config.example.yml`). An existing email returns an explicit error, exposing whether that email is registered. For enumeration protection, explicitly set `autoSignIn: false` and configure email verification with a sender or `onExistingUserSignUp` to notify the email owner. Existing explicit overrides remain effective; no configuration migration is performed. The authentication plugin warns at startup about registration with auto sign-in disabled and neither verification nor an existing-user notification.
-
-The registration page treats `usePasswordRegistration().isSuccess` as request acceptance only. A refreshed session navigates signed-in users into the application. Visitors who remain signed out see neutral sign-in and recovery guidance, without an account-creation or email-delivery promise. Applications customizing this page must keep that distinction.
+当前已验证角色协作流程、权限检查和前端构建；配置私有源后的独立依赖解析也已通过。完整的全新环境安装及可移植生产包尚未完成端到端验证。仓库暂未提交依赖锁文件，不同时间安装可能解析到不同的兼容版本。
